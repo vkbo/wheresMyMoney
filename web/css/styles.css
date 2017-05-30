@@ -1,0 +1,164 @@
+/**
+ *  Where's My Money? – Main CSS File
+ * ===================================
+ *  Created 2017-05-30
+ */
+
+html {
+    background-color: #e0e0e0;
+}
+
+body {
+    padding: 40px;
+    font-size: 15px;
+}
+
+h1 {font-size: 2.00em; margin: 0em 0em 0.4em 0em;}
+h2 {font-size: 1.50em; margin: 0em 0em 0.4em 0em;}
+h3 {font-size: 1.15em; margin: 0em 0em 0.4em 0em;}
+h4 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
+h5 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
+h6 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
+
+a       {color: #00aa00; text-decoration: none;}
+a:hover {color: #00aa00; text-decoration: underline;}
+
+/**
+ *  Wrappers
+ */
+
+#left-side {
+    display: inline-block;
+    width: 270px;
+    vertical-align: top;
+    margin-right: 20px;
+    /*border: 1px solid #000000;*/
+}
+
+#site-content {
+    display: inline-block;
+    padding: 40px;
+    width: 900px;
+    background-color: #ffffff;
+    /*margin: 20px auto;*/
+    box-shadow: 5px 5px 5px #a0a0a0;
+    -moz-box-shadow: 5px 5px 5px #a0a0a0;
+    -webkit-box-shadow: 5px 5px 5px #a0a0a0;
+    border: 1px solid #d0d0d0;
+    vertical-align: top;
+}
+
+/**
+ *  Logo
+ */
+
+#site-logo {
+    display: block;
+    position: relative;
+    width: 300px;
+    height: 100px;
+    font-family: 'Berkshire Swash', cursive;
+    font-weight: 400;
+    color: #606060;
+    text-shadow: 5px 5px 5px #a0a0a0;
+    -moz-text-shadow: 5px 5px 5px #a0a0a0;
+    -webkit-text-shadow: 5px 5px 5px #a0a0a0;
+    margin: 20px 0;
+}
+
+#logo-wheres {
+    position: absolute;
+    font-size: 48px;
+    top: 0px;
+    left: 0px;
+}
+
+#logo-my {
+    position: absolute;
+    font-size: 24px;
+    top: 52px;
+    left: 60px;
+}
+
+#logo-money {
+    position: absolute;
+    font-size: 48px;
+    top: 40px;
+    left: 100px;
+}
+
+/**
+ *  Header
+ */
+
+#header {
+    border-bottom: 1px solid #000000;
+}
+
+#header h1 {
+    margin: 0;
+}
+
+#main-menu {
+    /*background-color: #f0f0f0;*/
+    margin-bottom: 12px;
+}
+
+#main-menu ul {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#main-menu ul li {
+    display: inline-block;
+    padding: 4px 8px;
+}
+
+#main-menu ul li:hover {
+    background-color: #e0f0e0;
+}
+
+/**
+ *  Formatting
+ */
+
+.values {
+    font-family: 'Source Code Pro', monospace;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+.center {
+    text-align: center;
+}
+
+.noborder {
+    border: 0;
+}
+
+.green  {color: #008800;}
+.red    {color: #880000;}
+.orange {color: #aa6600;}
+
+
+/* Mobile */
+
+@media screen and (max-width: 500px) {
+
+    body {
+        padding: 4% 2%;
+        margin: 0;
+        box-shadow: none;
+        -moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        border: none;
+    }
+}
