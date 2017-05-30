@@ -63,7 +63,7 @@ a:hover {color: #00aa00; text-decoration: underline;}
     text-shadow: 5px 5px 5px #a0a0a0;
     -moz-text-shadow: 5px 5px 5px #a0a0a0;
     -webkit-text-shadow: 5px 5px 5px #a0a0a0;
-    margin: 20px 0;
+    margin: 20px 0 40px 0;
 }
 
 #logo-wheres {
@@ -85,6 +85,74 @@ a:hover {color: #00aa00; text-decoration: underline;}
     font-size: 48px;
     top: 40px;
     left: 100px;
+}
+
+/**
+ *  Site Menu
+ */
+
+#left-menu {
+    margin: 40px 0;
+}
+
+#left-menu ul {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#left-menu ul li {
+    display: inline-block;
+    background-color: #f7f7f7;
+    height: 32px;
+    padding: 0;
+    box-shadow: 5px 5px 5px #a0a0a0;
+    -moz-box-shadow: 5px 5px 5px #a0a0a0;
+    -webkit-box-shadow: 5px 5px 5px #a0a0a0;
+    border: 1px solid #707070;
+    margin-bottom: 2px;
+}
+
+#left-menu ul li:hover {
+    background-color: #f0f0f0;
+}
+
+#left-menu ul li .menu-icon {
+    display: inline-block;
+    background-color: #999999;
+    width: 32px;
+    height: 32px;
+    vertical-align: top;
+}
+
+#left-menu ul li .menu-icon img {
+    width: 24px;
+    height: 24px;
+    margin: 4px 0 0 4px;
+}
+
+#left-menu ul li .triangle {
+    display: inline-block;
+    color: #999999;
+    margin: 2px 6px 0 0;
+    font-size: 24px;
+    vertical-align: top;
+}
+
+#left-menu ul li a {
+    display: inline-block;
+    margin: 5px 8px 0 12px;
+    font-size: 20px;
+    /*border: 1px solid #000000;*/
+    vertical-align: top;
+    color: #00aa00;
+    text-decoration: none;
+}
+
+#left-menu ul li a:hover {
+    color: #009900;
+    text-decoration: none;
 }
 
 /**

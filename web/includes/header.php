@@ -29,7 +29,9 @@
         </div>
         <nav id="left-menu">
             <ul>
-                <li><a href="index.php">Overview</a></li>
+                <li><span class="menu-icon"><img src="images/icon_overview.png" /></span><a href="index.php">Overview</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_accounts.png" /></span><a href="accounts.php">Accounts</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_settings.png" /></span><a href="settings.php">Settings</a><span class="triangle">&#9658;</span></li>
             </ul>
         </nav>
     </div>
