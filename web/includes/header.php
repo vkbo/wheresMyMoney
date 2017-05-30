@@ -31,6 +31,11 @@
             <ul>
                 <li><span class="menu-icon"><img src="images/icon_overview.png" /></span><a href="index.php">Overview</a><span class="triangle">&#9658;</span></li>
                 <li><span class="menu-icon"><img src="images/icon_accounts.png" /></span><a href="accounts.php">Accounts</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_bank.png" /></span><a href="bank.php">Bank</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_invest.png" /></span><a href="investments.php">Investments</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_debt.png" /></span><a href="debt.php">Debt</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_income.png" /></span><a href="income.php">Income</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_report.png" /></span><a href="reports.php">Reports</a><span class="triangle">&#9658;</span></li>
                 <li><span class="menu-icon"><img src="images/icon_settings.png" /></span><a href="settings.php">Settings</a><span class="triangle">&#9658;</span></li>
             </ul>
         </nav>
