@@ -20,8 +20,8 @@ h4 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
 h5 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
 h6 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
 
-a       {color: #00aa00; text-decoration: none;}
-a:hover {color: #00aa00; text-decoration: underline;}
+a       {color: #009900; text-decoration: none;}
+a:hover {color: #009900; text-decoration: underline;}
 
 /**
  *  Wrappers
@@ -189,33 +189,48 @@ a:hover {color: #00aa00; text-decoration: underline;}
 }
 
 /**
+ *  Tables
+ */
+
+.list-table td {
+    padding: 2px 4px;
+}
+
+.list-section td {
+    padding: 12px 4px 2px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.list-head td {
+    font-weight: bold;
+    border-bottom: 2px solid #009900;
+}
+
+.list-row {
+
+}
+
+/**
  *  Formatting
  */
 
-.values {
+.mono   {
     font-family: 'Source Code Pro', monospace;
+    font-size: 1.0em;
 }
 
-.left {
-    text-align: left;
-}
+.left   {text-align: left;}
+.right  {text-align: right;}
+.center {text-align: center;}
 
-.right {
-    text-align: right;
-}
-
-.center {
-    text-align: center;
-}
-
-.noborder {
-    border: 0;
-}
-
+.black  {color: #000000;}
 .green  {color: #008800;}
 .red    {color: #880000;}
 .orange {color: #aa6600;}
 
+.even   {background-color: #f7f7f7;}
+.odd    {background-color: #e7e7e7;}
 
 /* Mobile */
 
