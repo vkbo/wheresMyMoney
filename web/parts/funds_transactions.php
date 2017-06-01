@@ -11,8 +11,10 @@
     $aFunds   = $theFunds->getEntry($fundsID);
 
     $theTrans = new Transact($oDB);
-    $theTrans->setFiler("FundsID",$fundsID);
+    $theTrans->setFilter("FundsID",$fundsID);
     $aTrans   = $theTrans->getEntry();
 
-    print_r($aTrans);
+    // print_r($aTrans);
+
+    echo "<a href='import.php?Type=Trans&ID=".$fundsID."'>Import Transactions</a><br />\n";
 ?>

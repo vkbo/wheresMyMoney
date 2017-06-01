@@ -10,7 +10,7 @@ html {
 
 body {
     padding: 40px;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 h1 {font-size: 2.00em; margin: 0em 0em 0.4em 0em;}
@@ -218,12 +218,21 @@ a:hover {color: #009900; text-decoration: underline;}
 }
 
 /**
+ *  Forms
+ */
+
+.input-button {
+    padding: 0;
+    text-align: right;
+}
+
+/**
  *  Formatting
  */
 
 .mono   {
     font-family: 'Source Code Pro', monospace;
-    font-size: 1.0em;
+    font-size: 0.95em;
 }
 
 .left   {text-align: left;}

@@ -12,11 +12,7 @@
     // Parse $_POST data
     function htmPost($sVar, $vDefault="") {
         if(array_key_exists($sVar, $_POST)) {
-            $vData = $_POST[$sVar];
-            //~ $vData = str_replace("'",     "", $vData);
-            $vData = str_replace(";",     "", $vData);
-            $vData = str_replace(chr(34), "", $vData);
-            return $vData;
+            return $_POST[$sVar];
         } else {
             return $vDefault;
         }
@@ -86,4 +82,13 @@
             return $sValue;
         }
     }
+
+   /**
+    *  Math Functions
+    */
+
+    function getSign($dValue) {
+        return round(abs($dValue)/$dValue);
+    }
+
 ?>
