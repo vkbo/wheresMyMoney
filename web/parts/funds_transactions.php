@@ -12,7 +12,7 @@
 
     $theTrans = new Transact($oDB);
     $theTrans->setFilter("FundsID",$fundsID);
-    $aTrans   = $theTrans->getEntry();
+    $aTrans   = $theTrans->getData();
 
     // print_r($aTrans);
 

@@ -30,13 +30,14 @@
             $aBits = explode("\t",$sLine);
             if(count($aBits) < 4) continue;
 
-            $rawRDate  = strtotime(trim($aBits[0]));
-            $rawText   = trim($aBits[1]);
-            $rawTDate  = strtotime(trim($aBits[2]));
-            $rawAmount = trim($aBits[3]);
+            $rawRDate   = trim($aBits[0]) == "" ? null : strtotime(trim($aBits[0]));
+            $rawText    = trim($aBits[1]) == "" ? null : trim($aBits[1]);
+            $rawTDate   = trim($aBits[2]) == "" ? null : strtotime(trim($aBits[2]));
+            $rawAmount  = trim($aBits[3]) == "" ? null : trim($aBits[3]);
 
-            $rawCurr   = null;
-            $rawOrig   = null;
+            $rawCurr    = null;
+            $rawOrig    = null;
+            $isComplete = 0;
 
             // Reject line if there's no date
             if(!is_numeric($rawRDate)) continue;
@@ -47,14 +48,15 @@
 
             // If text starts with a * it's a VISA transaction
             // Trying to extract currency
+            $aElems = explode(" ",$rawText);
             if(substr($rawText,0,1) == "*") {
-                $aElems = explode(" ",$rawText);
                 if(count($aElems) > 3) {
                     $rawCurr = $aElems[2];
                     $rawOrig = round(floatval($aElems[3])*100);
                     $rawOrig = getSign($rawAmount)*abs($rawOrig);
                 }
             }
+            if(count($aElems) > 1) $isComplete = 1;
 
             $aReturn["Data"][] = array(
                 "RecordDate"      => $rawRDate,
@@ -63,6 +65,7 @@
                 "Original"        => $rawOrig,
                 "Currency"        => $rawCurr,
                 "Amount"          => $rawAmount,
+                "Complete"        => $isComplete,
                 "Hash"            => md5($rawRDate.":".$rawText.":".$rawAmount),
             );
 

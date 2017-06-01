@@ -74,6 +74,10 @@
         return $sReturn;
     }
 
+    function rdblDate($iVal, $sFormat) {
+        return $iVal === null ? "&nbsp;" : date($sFormat,intval($iVal));
+    }
+
     function rdblLongStr($sValue, $nMax, $nullString="") {
         if(is_null($sValue)) return $nullString;
         if(strlen($sValue) > $nMax) {

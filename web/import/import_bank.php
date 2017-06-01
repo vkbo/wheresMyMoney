@@ -34,14 +34,15 @@
         $dateMax = $aImport["Meta"]["DateMax"];
 
         $theTrans->setFilter("FundsID",$fundsID);
-        // $theTrans->setFilter("FromDate",$dateMin-7*86400);
+        $theTrans->setFilter("FromDate",$dateMin-7*86400);
 
-        $theTrans->saveTemp($aImport["Data"],true);
+        //$theTrans->saveTemp($aImport["Data"],true);
 
-        // $aExists = $theTrans->getEntry();
+        $aExists = $theTrans->getData();
 
         $toc = microtime(true);
         $aReturn["Data"]         = $aImport["Data"];
+        $aReturn["Exists"]       = $aExists["Data"];
         $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
 
         return $aReturn;
