@@ -40,7 +40,6 @@ a:hover {color: #009900; text-decoration: underline;}
     padding: 40px;
     width: 900px;
     background-color: #ffffff;
-    /*margin: 20px auto;*/
     box-shadow: 5px 5px 5px #a0a0a0;
     -moz-box-shadow: 5px 5px 5px #a0a0a0;
     -webkit-box-shadow: 5px 5px 5px #a0a0a0;
@@ -211,6 +210,13 @@ a:hover {color: #009900; text-decoration: underline;}
 
 }
 
+.list-stats td {
+    /*text-align: right;*/
+    font-size: 0.8em;
+    color: #777777;
+    padding: 12px 0 0 0;
+}
+
 /**
  *  Formatting
  */
@@ -232,16 +238,43 @@ a:hover {color: #009900; text-decoration: underline;}
 .even   {background-color: #f7f7f7;}
 .odd    {background-color: #e7e7e7;}
 
-/* Mobile */
+/**
+ *  Print Styles
+ */
+
+@page {
+    size: 210mm 297mm;
+    margin: 12mm 9mm;
+}
+
+@media print {
+
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+        background: none;
+    }
+
+    #left-side {
+        display: none;
+    }
+
+    #site-content {
+        display: block;
+        padding: 0;
+        margin: 0;
+        box-shadow: 0;
+        -moz-box-shadow: 0;
+        -webkit-box-shadow: 0;
+        border: 0;
+    }
+}
+
+/**
+ *  Mobile Styles
+ */
 
 @media screen and (max-width: 500px) {
 
-    body {
-        padding: 4% 2%;
-        margin: 0;
-        box-shadow: none;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        border: none;
-    }
 }

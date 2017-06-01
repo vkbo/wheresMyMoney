@@ -41,5 +41,6 @@
         echo "</tr>";
         $oddEven++;
     }
+    echo "<tr class='list-stats'><td colspan=5>Query: ".number_format($aFunds["Meta"]["Time"],2)." ms</td></tr>";
     echo "</table>\n";
 ?>
