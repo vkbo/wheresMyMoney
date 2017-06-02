@@ -7,14 +7,11 @@
 
     class Transact
     {
-        // Publics
-
         // Privates
         private $db;
         private $fundsID  = null;
         private $fromDate = null;
         private $toDate   = null;
-
 
         // Constructor
         function __construct($oDB) {
@@ -75,6 +72,13 @@
                     break;
             }
         }
+
+       /**
+        *  Get data from transactions table
+        * ==================================
+        *  - Pulls a single record if ID is specified, otherwise pulls all that matches the filters
+        *    set bu the setFilter method
+        */
 
         public function getData($ID=0) {
 
@@ -143,49 +147,11 @@
         }
 
        /**
-        *  Returns all entries in temporary table for a given funds ID
-        */
-
-        public function getTemp() {
-
-            if(is_null($this->fundsID)) return false;
-
-            $tic = microtime(true);
-
-            $aReturn = array(
-                "Meta" => array(
-                    "Content" => "Transactions",
-                    "Count"   => 0,
-                ),
-                "Data" => array(),
-            );
-
-            $SQL  = "SELECT * ";
-            $SQL .= "FROM transactions_temp ";
-            $SQL .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int")." ";
-            $SQL .= "ORDER BY RecordDate ASC, ID ASC ";
-            $oData = $this->db->query($SQL);
-
-            if(!$oData) {
-                echo "MySQL Query Failed ...<br />";
-                echo "Error: ".$this->db->error."<br />";
-                echo "The Query was:<br />";
-                echo str_replace("\n","<br />",$SQL);
-            }
-
-            while($aRow = $oData->fetch_assoc()) {
-                $aReturn["Data"][] = $aRow;
-            }
-            $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
-
-            $toc = microtime(true);
-            $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
-
-            return $aReturn;
-        }
-
-       /**
-        *  Saves imported transactions to permanent table.
+        *  Save data to transactions table
+        * =================================
+        *  - Requirers fundsID to be set.
+        *  - Takes an array of arrau records as input and saves them or updates the corresponding
+        *    value if an ID is specified.
         */
 
         public function saveData($aData) {
@@ -258,67 +224,11 @@
         }
 
        /**
-        *  Saves imported transactions to temporary table.
+        *  Delete data in transactions table
+        * ===================================
+        *  - Requires a fundsID to be set.
+        *  - Takes an array of IDs as input.
         */
-
-        public function saveTemp($aData, $removeOld=false) {
-
-            if(is_null($this->fundsID)) return false;
-
-            if($removeOld) {
-                $SQL = "DELETE FROM transactions_temp WHERE FundsID = '".$this->db->real_escape_string($this->fundsID)."';\n";
-            } else {
-                $SQL = "";
-            }
-
-            reset($aData);
-            foreach($aData as $iKey=>$aRow) {
-                if(array_key_exists("ID",$aRow)) {
-                    $SQL .= "UPDATE transactions_temp SET ";
-                    $SQL .= "FundsID = "        .$this->dbWrap($this->fundsID,"int").", ";
-                    $SQL .= "RecordDate = "     .$this->dbWrap($aRow["RecordDate"],"date").", ";
-                    $SQL .= "TransactionDate = ".$this->dbWrap($aRow["TransactionDate"],"date").", ";
-                    $SQL .= "Details = "        .$this->dbWrap($aRow["Details"],"text").", ";
-                    $SQL .= "Original = "       .$this->dbWrap($aRow["Original"],"int").", ";
-                    $SQL .= "Currency = "       .$this->dbWrap($aRow["Currency"],"text").", ";
-                    $SQL .= "Amount = "         .$this->dbWrap($aRow["Amount"],"int").", ";
-                    $SQL .= "Hash = "           .$this->dbWrap($aRow["Hash"],"text")." ";
-                    $SQL .= "WHERE ID = "       .$this->dbWrap($aRow["ID"],"int")." ";
-                    $SQL .= "AND FundsID = '"   .$this->dbWrap($this->fundsID,"int").";\n";
-                } else {
-                    $SQL .= "INSERT INTO transactions_temp (";
-                    $SQL .= "FundsID, ";
-                    $SQL .= "RecordDate, ";
-                    $SQL .= "TransactionDate, ";
-                    $SQL .= "Details, ";
-                    $SQL .= "Original, ";
-                    $SQL .= "Currency, ";
-                    $SQL .= "Amount, ";
-                    $SQL .= "Hash ";
-                    $SQL .= ") VALUES (";
-                    $SQL .= $this->dbWrap($this->fundsID,"int").", ";
-                    $SQL .= $this->dbWrap($aRow["RecordDate"],"date").", ";
-                    $SQL .= $this->dbWrap($aRow["TransactionDate"],"date").", ";
-                    $SQL .= $this->dbWrap($aRow["Details"],"text").", ";
-                    $SQL .= $this->dbWrap($aRow["Original"],"int").", ";
-                    $SQL .= $this->dbWrap($aRow["Currency"],"text").", ";
-                    $SQL .= $this->dbWrap($aRow["Amount"],"int").", ";
-                    $SQL .= $this->dbWrap($aRow["Hash"],"text").");\n";
-                }
-            }
-            $oRes = $this->db->multi_query($SQL);
-            while($this->db->more_results()) $this->db->next_result();
-
-            if(!$oRes) {
-                echo "MySQL Query Failed ...<br />";
-                echo "Error: ".$this->db->error."<br />";
-                echo "The Query was:<br />";
-                echo str_replace("\n","<br />",$SQL);
-                return false;
-            } else {
-                return true;
-            }
-        }
 
         public function deleteData($aIDs) {
 
