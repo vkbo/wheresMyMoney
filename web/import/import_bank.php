@@ -22,27 +22,10 @@
             ),
             "Data" => array(),
         );
-
-        $theTrans = new Transact($oDB);
-
         $aImport = call_user_func("importParseBank_".$scriptType, $rawData);
-
-        // print_r($aImport);
-
-        $iCount  = $aImport["Meta"]["Count"];
-        $dateMin = $aImport["Meta"]["DateMin"];
-        $dateMax = $aImport["Meta"]["DateMax"];
-
-        $theTrans->setFilter("FundsID",$fundsID);
-        $theTrans->setFilter("FromDate",$dateMin-7*86400);
-
-        //$theTrans->saveTemp($aImport["Data"],true);
-
-        $aExists = $theTrans->getData();
 
         $toc = microtime(true);
         $aReturn["Data"]         = $aImport["Data"];
-        $aReturn["Exists"]       = $aExists["Data"];
         $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
 
         return $aReturn;

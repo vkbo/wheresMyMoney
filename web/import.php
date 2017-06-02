@@ -43,9 +43,16 @@
         $rawData = htmPost("rawData","");
         $aImport = importBank("NO_Sparebank1_csv",$dataID,$rawData);
 
-        // var_dump($aImport);
+        $iCount  = $aImport["Meta"]["Count"];
+        $dateMin = $aImport["Meta"]["DateMin"];
+        $dateMax = $aImport["Meta"]["DateMax"];
 
-        $oddEven = 0;
+        $theTrans = new Transact($oDB);
+        $theTrans->setFilter("FundsID",$dataID);
+        $theTrans->setFilter("FromDate",$dateMin-7*86400);
+        $aExists  = $theTrans->getData();
+
+        $oddEven  = 0;
 
         echo "<form method='post' action='import.php?Type=".$dataType."&ID=".$dataID."&Step=3'>\n";
         echo "<table class='list-table'>\n";
@@ -58,8 +65,21 @@
             echo "<td colspan=2 class='right'>Currency</td>";
             echo "<td class='right'>Amount</td>";
         echo "</tr>";
-        foreach($aImport["Data"] as $iKey=>$aRow) {
+        foreach($aExists["Data"] as $iKey=>$aRow) {
             echo "<tr class='list-row ".($oddEven%2==0?"even":"odd")."'>";
+                echo "<td>&nbsp;</td>";
+                echo "<td><input type='checkbox' name='delLines[]' value='".$aRow["ID"]."' /></td>";
+                echo "<td>".rdblDate($aRow["RecordDate"],$cDateS)."</td>";
+                echo "<td>".$aRow["Details"]."</td>";
+                echo "<td>".rdblDate($aRow["TransactionDate"],$cDateS)."</td>";
+                echo "<td class='mono'>".$aRow["Currency"]."</td>";
+                echo "<td class='mono right'>".rdblAmount($aRow["Original"],100)."</td>";
+                echo "<td class='mono right'>".rdblAmount($aRow["Amount"],100)."</td>";
+            echo "</tr>";
+            $oddEven++;
+        }
+        foreach($aImport["Data"] as $iKey=>$aRow) {
+            echo "<tr class='list-row g-".($oddEven%2==0?"even":"odd")."'>";
                 echo "<td><input type='checkbox' name='accLines[]' value='".$iKey."' checked /></td>";
                 echo "<td>&nbsp;</td>";
                 echo "<td>".rdblDate($aRow["RecordDate"],$cDateS)."</td>";
@@ -70,17 +90,6 @@
                 echo "<td class='mono right'>".rdblAmount($aRow["Amount"],100)."</td>";
             echo "</tr>";
             $oddEven++;
-            // echo "<tr class='list-row ".($oddEven%2==0?"even":"odd")."'>";
-            //     echo "<td><input type='checkbox' name='accept_".$iKey."' checked /></td>";
-            //     echo "<td><input type='checkbox' name='reject_".$iKey."' /></td>";
-            //     echo "<td>".rdblDate($aRow["RecordDate"],$cDateS)."</td>";
-            //     echo "<td>".$aRow["Details"]."</td>";
-            //     echo "<td>".rdblDate($aRow["TransactionDate"],$cDateS)."</td>";
-            //     echo "<td class='mono'>".$aRow["Currency"]."</td>";
-            //     echo "<td class='mono right'>".rdblAmount($aRow["Original"],100)."</td>";
-            //     echo "<td class='mono right'>".rdblAmount($aRow["Amount"],100)."</td>";
-            // echo "</tr>";
-            // $oddEven++;
         }
         echo "<tr class='list-stats'><td colspan=8>Import: ".number_format($aImport["Meta"]["Time"],2)." ms</td></tr>";
         echo "<tr>";
@@ -97,18 +106,16 @@
 
         $aImport  = json_decode(base64_decode(htmPost("importData","")),true);
         $accLines = htmPost("accLines",array());
+        $delLines = htmPost("delLines",array());
 
         $aData = array();
         foreach($accLines as $iImport) {
             $aData[] = $aImport["Data"][$iImport];
         }
 
-        // var_dump($accLines);
-        // var_dump($aImport);
-        print_r($aData);
         $theTrans->setFilter("FundsID",$dataID);
         $theTrans->saveData($aData);
-
+        $theTrans->deleteData($delLines);
     }
 
     require_once("includes/footer.php");

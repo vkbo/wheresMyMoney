@@ -195,6 +195,11 @@ a:hover {color: #009900; text-decoration: underline;}
     padding: 2px 4px;
 }
 
+.list-table td img {
+    height: 1em;
+    width: auto;
+}
+
 .list-section td {
     padding: 12px 4px 2px 0;
     font-size: 1.2em;
@@ -204,10 +209,6 @@ a:hover {color: #009900; text-decoration: underline;}
 .list-head td {
     font-weight: bold;
     border-bottom: 2px solid #009900;
-}
-
-.list-row {
-
 }
 
 .list-stats td {
@@ -246,6 +247,8 @@ a:hover {color: #009900; text-decoration: underline;}
 
 .even   {background-color: #f7f7f7;}
 .odd    {background-color: #e7e7e7;}
+.g-even {background-color: #e7f7e7;}
+.g-odd  {background-color: #d7e7d7;}
 
 /**
  *  Print Styles

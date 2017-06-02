@@ -1,0 +1,20 @@
+
+ Sources and License of Icons
+******************************
+
+ Left Side Menu :
+==================
+ icon_accounts.png        By IYIKON / thenounproject.com            License: Creative Commons
+ icon_bank.png            By Lucas Dino Nolte / thenounproject.com  License: Creative Commons
+ icon_debt.png            By Dara Ullrich / thenounproject.com      License: Creative Commons
+ icon_income.png          By Gregor Cresnar / thenounproject.com    License: Creative Commons
+ icon_invest.png          By Gregor Cresnar / thenounproject.com    License: Creative Commons
+ icon_options.png         By Setyo Ari Wibowo / thenounproject.com  License: Creative Commons
+ icon_overview.png        By parkjisun / thenounproject.com         License: Creative Commons
+ icon_report.png          By Ayub Irawan / thenounproject.com       License: Creative Commons
+ icon_settings.png        By mikicon / thenounproject.com           License: Creative Commons
+
+ Page Content:
+===============
+ icon_gtk_edit_col.png    By GNOME icon artists                     License: GNU General Public License
+ icon_gtk_delete_col.png  By GNOME icon artists                     License: GNU General Public License

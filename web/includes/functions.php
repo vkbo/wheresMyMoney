@@ -61,7 +61,7 @@
 
     function rdblAmount($iVal, $iFac, $iDec=2, $iMax=2) {
 
-        if(is_null($iVal)) $iVal = 0;
+        if(is_null($iVal)) return "";
         if($iDec == 0)     $iDec = log10($iFac);
         if($iDec > $iMax)  $iDec = $iMax;
 

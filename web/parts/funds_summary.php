@@ -7,7 +7,7 @@
 
     $theFunds = new Funds($oDB);
 
-    $aFunds = $theFunds->getEntry();
+    $aFunds = $theFunds->getData();
 
     $prevTitle = "";
     $oddEven   = 0;

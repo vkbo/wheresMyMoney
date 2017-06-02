@@ -98,8 +98,8 @@
             $SQL .= "tc.ISO AS Currency, ";
             $SQL .= "tc.Factor AS CurrencyFac, ";
             $SQL .= "t.Amount AS Amount, ";
-            $SQL .= "t.Complete AS Complete, ";
-            $SQL .= "fc.Factor AS AmountFac ";
+            $SQL .= "fc.Factor AS AmountFac, ";
+            $SQL .= "t.Complete AS Complete ";
             $SQL .= "FROM transactions AS t ";
             $SQL .= "LEFT JOIN funds AS f ON f.ID = t.FundsID ";
             $SQL .= "LEFT JOIN currency AS tc ON tc.ID = t.CurrencyID ";
@@ -121,7 +121,19 @@
             $oData = $this->db->query($SQL);
 
             while($aRow = $oData->fetch_assoc()) {
-                $aReturn["Data"][] = $aRow;
+                $aReturn["Data"][] = array(
+                    "ID"              => $aRow["ID"],
+                    "FundsName"       => $aRow["FundsName"],
+                    "RecordDate"      => strtotime($aRow["RecordDate"]),
+                    "TransactionDate" => $aRow["TransactionDate"] === null ? null : strtotime($aRow["TransactionDate"]),
+                    "Details"         => $aRow["Details"],
+                    "Original"        => $aRow["Original"],
+                    "Currency"        => $aRow["Currency"],
+                    "CurrencyFac"     => $aRow["CurrencyFac"],
+                    "Amount"          => $aRow["Amount"],
+                    "AmountFac"       => $aRow["AmountFac"],
+                    "Complete"        => $aRow["Complete"],
+                );
             }
             $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
 
@@ -232,8 +244,8 @@
                     $SQL .= $this->dbWrap(time(),"datetime").");\n";
                 }
             }
-            echo "The Query was:<br />";
-            echo str_replace("\n","<br />",$SQL);
+            if($SQL == "") return true;
+
             $oRes = $this->db->multi_query($SQL);
             while($this->db->more_results()) $this->db->next_result();
 
@@ -296,6 +308,35 @@
                     $SQL .= $this->dbWrap($aRow["Amount"],"int").", ";
                     $SQL .= $this->dbWrap($aRow["Hash"],"text").");\n";
                 }
+            }
+            $oRes = $this->db->multi_query($SQL);
+            while($this->db->more_results()) $this->db->next_result();
+
+            if(!$oRes) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        public function deleteData($aIDs) {
+
+            if(is_null($this->fundsID)) return false;
+
+            $SQL = "";
+
+            reset($aData);
+            foreach($aIDs as $iID) {
+
+                if(!$iID > 0) continue;
+
+                $SQL .= "DELETE FROM transactions ";
+                $SQL .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int")." ";
+                $SQL .= "AND ID = ".$this->dbWrap($iID,"int").";\n";
             }
             $oRes = $this->db->multi_query($SQL);
             while($this->db->more_results()) $this->db->next_result();
