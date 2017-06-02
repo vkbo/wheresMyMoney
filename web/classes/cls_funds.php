@@ -7,14 +7,14 @@
 
     class Funds
     {
-        // Publics
-
-        // Privates
+        // Variables
         private $db;
+        private $year;
 
         // Constructor
         function __construct($oDB) {
-            $this->db = $oDB;
+            $this->db   = $oDB;
+            $this->year = date("Y",time());
         }
 
         // Methods
@@ -41,20 +41,59 @@
             $SQL .= "b.Name AS BankName, ";
             $SQL .= "c.ISO AS CurrencyISO, ";
             $SQL .= "c.Factor AS Factor, ";
-            $SQL .= "SUM(t.Amount) AS Balance ";
+            $SQL .= "t.Balance AS ThisYear, ";
+            $SQL .= "ty.Balance AS StartOfYear ";
             $SQL .= "FROM funds AS f ";
             $SQL .= "LEFT JOIN bank AS b ON b.ID = f.BankID ";
             $SQL .= "LEFT JOIN currency AS c ON c.ID = f.CurrencyID ";
-            $SQL .= "LEFT JOIN transactions AS t ON t.FundsID = f.ID ";
+            $SQL .= "LEFT JOIN (";
+            $SQL .=     "SELECT ";
+            $SQL .=     "FundsID, ";
+            $SQL .=     "SUM(Amount) AS Balance ";
+            $SQL .=     "FROM transactions ";
+            $SQL .=     "WHERE RecordDate >= '".$this->year."-01-01' ";
+            $SQL .=     "AND RecordDate <= '".$this->year."-12-31' ";
+            $SQL .=     "GROUP BY FundsID";
+            $SQL .= ") AS t ON t.FundsID = f.ID ";
+            $SQL .= "LEFT JOIN (";
+            $SQL .=     "SELECT ";
+            $SQL .=     "FundsID, ";
+            $SQL .=     "SUM(Amount) AS Balance ";
+            $SQL .=     "FROM transactions_yearly ";
+            $SQL .=     "WHERE RecordDate <= '".($this->year-1)."-12-31' ";
+            $SQL .=     "GROUP BY FundsID";
+            $SQL .= ") AS ty ON ty.FundsID = f.ID ";
+            $SQL .= "WHERE (Closed IS NULL OR Closed >= '".$this->year."-01-01') ";
             if($ID > 0) {
-                $SQL .= "WHERE f.ID = '".$this->db->real_escape_string($ID)."' ";
+                $SQL .= "AND f.ID = '".$this->db->real_escape_string($ID)."' ";
             }
             $SQL .= "GROUP BY f.ID ";
             $SQL .= "ORDER BY FIELD(f.Type,'B','C','X'), b.ID ASC, FIELD(f.Category,'P','S'), f.ID ASC ";
             $oData = $this->db->query($SQL);
 
+            if(!$oData) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+            }
+
             while($aRow = $oData->fetch_assoc()) {
-                $aReturn["Data"][] = $aRow;
+                $aReturn["Data"][] = array(
+                    "ID"            => $aRow["ID"],
+                    "FundsName"     => $aRow["FundsName"],
+                    "AccountNumber" => $aRow["AccountNumber"],
+                    "Type"          => $aRow["Type"],
+                    "Category"      => $aRow["Category"],
+                    "Opened"        => $aRow["Opened"],
+                    "Closed"        => $aRow["Closed"],
+                    "BankName"      => $aRow["BankName"],
+                    "CurrencyISO"   => $aRow["CurrencyISO"],
+                    "Factor"        => $aRow["Factor"],
+                    "ThisYear"      => $aRow["ThisYear"],
+                    "StartOfYear"   => $aRow["StartOfYear"],
+                    "Balance"       => $aRow["StartOfYear"]+$aRow["ThisYear"],
+                );
             }
             $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
 

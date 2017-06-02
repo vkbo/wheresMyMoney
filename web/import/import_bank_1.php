@@ -37,12 +37,12 @@
 
             $rawCurr    = null;
             $rawOrig    = null;
-            $isComplete = 0;
 
             // Reject line if there's no date
             if(!is_numeric($rawRDate)) continue;
 
             // Parse Norwegian number format
+            $rawAmount = str_replace(" ","", $rawAmount);
             $rawAmount = str_replace(",",".",$rawAmount);
             $rawAmount = round(floatval($rawAmount)*100);
 
@@ -56,7 +56,6 @@
                     $rawOrig = getSign($rawAmount)*abs($rawOrig);
                 }
             }
-            if(count($aElems) > 1) $isComplete = 1;
 
             $aReturn["Data"][] = array(
                 "RecordDate"      => $rawRDate,
@@ -65,7 +64,6 @@
                 "Original"        => $rawOrig,
                 "Currency"        => $rawCurr,
                 "Amount"          => $rawAmount,
-                "Complete"        => $isComplete,
                 "Hash"            => md5($rawRDate.":".$rawText.":".$rawAmount),
             );
 

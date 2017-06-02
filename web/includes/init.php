@@ -25,6 +25,7 @@
         "FundsCat" => array(
             "P" => "Spending",
             "S" => "Savings",
+            "K" => "Kredit",
         ),
     );
 

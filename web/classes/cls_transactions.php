@@ -132,7 +132,6 @@
                     "CurrencyFac"     => $aRow["CurrencyFac"],
                     "Amount"          => $aRow["Amount"],
                     "AmountFac"       => $aRow["AmountFac"],
-                    "Complete"        => $aRow["Complete"],
                 );
             }
             $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
@@ -230,7 +229,6 @@
                     $SQL .= "Original, ";
                     $SQL .= "CurrencyID, ";
                     $SQL .= "Amount, ";
-                    $SQL .= "Complete, ";
                     $SQL .= "Created ";
                     $SQL .= ") VALUES (";
                     $SQL .= $this->dbWrap($this->fundsID,"int").", ";
@@ -240,7 +238,6 @@
                     $SQL .= $this->dbWrap($aRow["Original"],"int").", ";
                     $SQL .= $this->dbWrap($iCurrencyID,"int").", ";
                     $SQL .= $this->dbWrap($aRow["Amount"],"int").", ";
-                    $SQL .= $this->dbWrap($aRow["Complete"],"int").", ";
                     $SQL .= $this->dbWrap(time(),"datetime").");\n";
                 }
             }
@@ -329,7 +326,6 @@
 
             $SQL = "";
 
-            reset($aData);
             foreach($aIDs as $iID) {
 
                 if(!$iID > 0) continue;
