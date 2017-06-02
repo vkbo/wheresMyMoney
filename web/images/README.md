@@ -5,7 +5,7 @@
 ### Left Side Menu
 
 File                 | Source                                   | Lisence
------------------------------------------------------------------------------------
+---------------------|------------------------------------------|------------------
 `icon_accounts.png`  | By IYIKON / thenounproject.com           | Creative Commons
 `icon_bank.png`      | By Lucas Dino Nolte / thenounproject.com | Creative Commons
 `icon_debt.png`      | By Dara Ullrich / thenounproject.com     | Creative Commons
@@ -19,6 +19,6 @@ File                 | Source                                   | Lisence
 ### Page Content
 
 File                      | Source                | Lisence
--------------------------------------------------------------------------------
+--------------------------|-----------------------|----------------------------
 `icon_gtk_edit_col.png`   | By GNOME icon artists | GNU General Public License
 `icon_gtk_delete_col.png` | By GNOME icon artists | GNU General Public License
