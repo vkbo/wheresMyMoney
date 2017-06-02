@@ -9,7 +9,7 @@
  icon_debt.png            By Dara Ullrich / thenounproject.com      License: Creative Commons
  icon_income.png          By Gregor Cresnar / thenounproject.com    License: Creative Commons
  icon_invest.png          By Gregor Cresnar / thenounproject.com    License: Creative Commons
- icon_options.png         By Setyo Ari Wibowo / thenounproject.com  License: Creative Commons
+ icon_tools.png           By Setyo Ari Wibowo / thenounproject.com  License: Creative Commons
  icon_overview.png        By parkjisun / thenounproject.com         License: Creative Commons
  icon_report.png          By Ayub Irawan / thenounproject.com       License: Creative Commons
  icon_settings.png        By mikicon / thenounproject.com           License: Creative Commons

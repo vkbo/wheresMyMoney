@@ -37,6 +37,7 @@
                 <li><span class="menu-icon"><img src="images/icon_debt.png" /></span><a href="debt.php">Debt</a><span class="triangle">&#9658;</span></li>
                 <li><span class="menu-icon"><img src="images/icon_income.png" /></span><a href="income.php">Income</a><span class="triangle">&#9658;</span></li>
                 <li><span class="menu-icon"><img src="images/icon_report.png" /></span><a href="reports.php">Reports</a><span class="triangle">&#9658;</span></li>
+                <li><span class="menu-icon"><img src="images/icon_tools.png" /></span><a href="tools.php">Tools</a><span class="triangle">&#9658;</span></li>
                 <li><span class="menu-icon"><img src="images/icon_settings.png" /></span><a href="settings.php">Settings</a><span class="triangle">&#9658;</span></li>
             </ul>
         </nav>
