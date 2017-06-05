@@ -12,6 +12,8 @@
         private $fundsID  = null;
         private $fromDate = null;
         private $toDate   = null;
+        private $pageSize = 50;
+        private $pageNum  = 1;
 
         // Constructor
         function __construct($oDB) {
@@ -45,13 +47,19 @@
         public function setFilter($filterType, $filterValue) {
             switch($filterType) {
                 case "FundsID":
-                    $this->fundsID  = $filterValue;
+                    $this->fundsID  = intval($filterValue);
                     break;
                 case "FromDate":
-                    $this->fromDate = $filterValue;
+                    $this->fromDate = intval($filterValue);
                     break;
                 case "ToDate":
-                    $this->toDate   = $filterValue;
+                    $this->toDate   = intval($filterValue);
+                    break;
+                case "PageSize":
+                    $this->pageSize = intval($filterValue);
+                    break;
+                case "PageNum":
+                    $this->pageNum  = intval($filterValue);
                     break;
                 default:
                     echo "Unknown filter type ...<br />";
@@ -70,7 +78,28 @@
                 case "ToDate":
                     $this->toDate   = null;
                     break;
+                case "PageSize":
+                    $this->pageSize = 50;
+                    break;
+                case "PageNum":
+                    $this->pageNum  = 1;
+                    break;
+                default:
+                    echo "Unknown filter type ...<br />";
+                    break;
             }
+        }
+
+        public function getCount() {
+
+            if(is_null($this->fundsID)) return false;
+
+            $SQL   = "SELECT COUNT(ID) AS Records FROM transactions ";
+            $SQL  .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int");
+            $oData = $this->db->query($SQL);
+            $aRow  = $oData->fetch_assoc();
+
+            return $aRow["Records"];
         }
 
        /**
@@ -80,7 +109,7 @@
         *    set bu the setFilter method
         */
 
-        public function getData($ID=0) {
+        public function getData($ID=0, $splitPages=false) {
 
             $tic = microtime(true);
 
@@ -121,6 +150,10 @@
             }
             if(!is_null($this->toDate)) {
                 $SQL .= "AND t.RecordDate <= '".date("Y-m-d",$this->toDate)."' ";
+            }
+            $SQL .= "ORDER BY t.RecordDate DESC, t.ID DESC ";
+            if($splitPages) {
+                $SQL .= "LIMIT ".(($this->pageNum-1)*$this->pageSize).",".$this->pageSize." ";
             }
             $oData = $this->db->query($SQL);
 

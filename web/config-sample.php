@@ -1,8 +1,8 @@
 <?php
     $cDBHost = "127.0.0.1";
-    $cDBUser = "cryptomonitor";
+    $cDBUser = "accounting";
     $cDBPass = "xxxxxxxxxxxx";
-    $cDBMain = "cryptomonitor";
+    $cDBMain = "accounting";
 
     $cDateS  = "d.m.Y";
     $cDateL  = "d.m.Y";

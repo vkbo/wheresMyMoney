@@ -21,4 +21,16 @@
 
         return;
     }
+
+    function echoPagination($thisPage, $pageNum, $nPages) {
+        echo "<b>Pages:</b>&nbsp;";
+        for($p=1; $p<=$nPages; $p++) {
+            if($p == $pageNum) {
+                echo "<b>".$p."</b>";
+            } else {
+                echo "<a href='".$thisPage."&Page=".$p."'>".$p."</a>";
+            }
+            if($p < $nPages) echo "&nbsp;|&nbsp;";
+        }
+    }
 ?>
