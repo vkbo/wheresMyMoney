@@ -59,7 +59,7 @@
         return trim(number_format($dValue,$iDecimals,"."," ")." ".$sUnit);
     }
 
-    function rdblAmount($iVal, $iFac, $iDec=2, $iMax=2) {
+    function rdblAmount($iVal, $iFac=2, $iDec=0, $iMax=12) {
 
         if(is_null($iVal)) return "";
         if($iDec == 0)     $iDec = log10($iFac);
@@ -85,6 +85,26 @@
         } else {
             return $sValue;
         }
+    }
+
+    function cleanMultLineString($sValue) {
+        $sValue = str_replace("\r", "", $sValue);
+        $sValue = str_replace("\n", " ", $sValue);
+        $sValue = str_replace("\t", " ", $sValue);
+        $sValue = str_replace("  ", " ", $sValue);
+        $sValue = str_replace("  ", " ", $sValue);
+        return trim($sValue);
+    }
+
+    function cleanAmountString($sValue, $iFactor) {
+        $iComma = strrpos($sValue, ",");
+        if($iComma !== false) {
+            $sValue = substr_replace($sValue, ".", $iComme, 1);
+        }
+        $sValue = str_replace(" ", "", $sValue);
+        $sValue = str_replace(",", "", $sValue);
+        $sValue = str_replace("'", "", $sValue);
+        return round(floatval($sValue)*$iFactor);
     }
 
    /**

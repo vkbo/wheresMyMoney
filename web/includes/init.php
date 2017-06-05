@@ -20,7 +20,7 @@
         "Funds" => array(
             "B" => "Bank Account",
             "C" => "Cash",
-            "X" => "Crypto Currencies",
+            "X" => "Crypto Currency",
         ),
         "FundsCat" => array(
             "P" => "Spending",
@@ -31,6 +31,7 @@
 
     // Include Classes
     require_once("classes/cls_bank.php");
+    require_once("classes/cls_currency.php");
     require_once("classes/cls_funds.php");
     require_once("classes/cls_transactions.php");
 

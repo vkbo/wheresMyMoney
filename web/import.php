@@ -26,13 +26,13 @@
 
     if($currStep == 1) {
         echo "<form method='post' action='import.php?Type=".$dataType."&ID=".$dataID."&Step=2'>\n";
-        echo "<table class='input-form'>";
+        echo "<table class='form-table'>";
         echo "<tr>";
-            echo "<td>Raw Data</td>";
-            echo "<td><textarea name='rawData'></textarea></td>";
+            echo "<th>Raw Data</th>";
+            echo "<td><textarea name='rawData' class='mono text-raw''></textarea></td>";
         echo "</tr>";
         echo "<tr>";
-            echo "<td colspan=2><input type='submit' /></td>";
+            echo "<td colspan=2 class='input-button'><input type='submit' /></td>";
         echo "</tr>";
         echo "</table>\n";
         echo "</form>";

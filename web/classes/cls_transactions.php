@@ -106,7 +106,7 @@
         *  Get data from transactions table
         * ==================================
         *  - Pulls a single record if ID is specified, otherwise pulls all that matches the filters
-        *    set bu the setFilter method
+        *    set by the setFilter method
         */
 
         public function getData($ID=0, $splitPages=false) {
@@ -129,14 +129,25 @@
             $SQL .= "t.Details AS Details, ";
             $SQL .= "t.Original AS Original, ";
             $SQL .= "tc.ISO AS Currency, ";
+            $SQL .= "t.CurrencyID AS CurrencyID, ";
             $SQL .= "tc.Factor AS CurrencyFac, ";
             $SQL .= "t.Amount AS Amount, ";
             $SQL .= "fc.Factor AS AmountFac, ";
-            $SQL .= "t.Complete AS Complete ";
+            $SQL .= "cm.Height AS BlockHeight, ";
+            $SQL .= "cm.Hash AS TransactionHash, ";
+            $SQL .= "IF(a.Count IS NULL, 0, a.Count) AS AccCount, ";
+            $SQL .= "IF(a.Total IS NULL, 0, a.Total) AS AccTotal ";
             $SQL .= "FROM transactions AS t ";
             $SQL .= "LEFT JOIN funds AS f ON f.ID = t.FundsID ";
             $SQL .= "LEFT JOIN currency AS tc ON tc.ID = t.CurrencyID ";
             $SQL .= "LEFT JOIN currency AS fc ON fc.ID = f.CurrencyID ";
+            $SQL .= "LEFT JOIN crypto_meta AS cm ON cm.transactionID = t.ID ";
+            $SQL .= "LEFT JOIN (";
+            $SQL .=     "SELECT TransactionID, ";
+            $SQL .=     "COUNT(ID) AS Count, ";
+            $SQL .=     "SUM(Amount) AS Total ";
+            $SQL .=     "FROM accounting GROUP BY TransactionID";
+            $SQL .= ") AS a ON t.ID = a.TransactionID ";
             if($ID > 0) {
                 $SQL .= "WHERE t.ID = '".$this->db->real_escape_string($ID)."' ";
             } else {
@@ -157,6 +168,14 @@
             }
             $oData = $this->db->query($SQL);
 
+            if(!$oData) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            }
+
             while($aRow = $oData->fetch_assoc()) {
                 $aReturn["Data"][] = array(
                     "ID"              => $aRow["ID"],
@@ -166,9 +185,14 @@
                     "Details"         => $aRow["Details"],
                     "Original"        => $aRow["Original"],
                     "Currency"        => $aRow["Currency"],
+                    "CurrencyID"      => $aRow["CurrencyID"],
                     "CurrencyFac"     => $aRow["CurrencyFac"],
                     "Amount"          => $aRow["Amount"],
                     "AmountFac"       => $aRow["AmountFac"],
+                    "AccCount"        => $aRow["AccCount"],
+                    "AccTotal"        => $aRow["AccTotal"],
+                    "BlockHeight"     => $aRow["BlockHeight"],
+                    "TransactionHash" => $aRow["TransactionHash"],
                 );
             }
             $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
@@ -199,26 +223,35 @@
             }
 
             $SQL = "";
-            reset($aData);
             foreach($aData as $iKey=>$aRow) {
 
-                if(array_key_exists($aRow["Currency"],$aCurrencyIDs)) {
-                    $iCurrencyID = $aCurrencyIDs[$aRow["Currency"]];
-                } else {
-                    $iCurrencyID = null;
+                if(!array_key_exists("CurrencyID", $aRow)) {
+                    if(array_key_exists($aRow["Currency"],$aCurrencyIDs)) {
+                        $aRow["CurrencyID"] = $aCurrencyIDs[$aRow["Currency"]];
+                    } else {
+                        $aRow["CurrencyID"] = null;
+                    }
                 }
 
-                if(array_key_exists("ID",$aRow)) {
+                $updateID = array_key_exists("ID",$aRow) ? $aRow["ID"] : 0;
+
+                if($updateID > 0) {
                     $SQL .= "UPDATE transactions SET ";
                     $SQL .= "FundsID = "        .$this->dbWrap($this->fundsID,"int").", ";
                     $SQL .= "RecordDate = "     .$this->dbWrap($aRow["RecordDate"],"date").", ";
                     $SQL .= "TransactionDate = ".$this->dbWrap($aRow["TransactionDate"],"date").", ";
                     $SQL .= "Details = "        .$this->dbWrap($aRow["Details"],"text").", ";
                     $SQL .= "Original = "       .$this->dbWrap($aRow["Original"],"int").", ";
-                    $SQL .= "CurrencyID = "     .$this->dbWrap($iCurrencyID,"int").", ";
+                    $SQL .= "CurrencyID = "     .$this->dbWrap($aRow["CurrencyID"],"int").", ";
                     $SQL .= "Amount = "         .$this->dbWrap($aRow["Amount"],"int")." ";
                     $SQL .= "WHERE ID = "       .$this->dbWrap($aRow["ID"],"int")." ";
-                    $SQL .= "AND FundsID = '"   .$this->dbWrap($this->fundsID,"int").";\n";
+                    $SQL .= "AND FundsID = "    .$this->dbWrap($this->fundsID,"int").";\n";
+                    if(array_key_exists("BlockHeight", $aRow) || array_key_exists("TransactionHash", $aRow)) {
+                        $SQL .= "UPDATE crypto_meta SET ";
+                        $SQL .= "Height = "             .$this->dbWrap($aRow["BlockHeight"],"int").", ";
+                        $SQL .= "Hash = "               .$this->dbWrap($aRow["TransactionHash"],"text")." ";
+                        $SQL .= "WHERE TransactionID = ".$this->dbWrap($aRow["ID"],"int").";\n";
+                    }
                 } else {
                     $SQL .= "INSERT INTO transactions (";
                     $SQL .= "FundsID, ";
@@ -235,15 +268,29 @@
                     $SQL .= $this->dbWrap($aRow["TransactionDate"],"date").", ";
                     $SQL .= $this->dbWrap($aRow["Details"],"text").", ";
                     $SQL .= $this->dbWrap($aRow["Original"],"int").", ";
-                    $SQL .= $this->dbWrap($iCurrencyID,"int").", ";
+                    $SQL .= $this->dbWrap($aRow["CurrencyID"],"int").", ";
                     $SQL .= $this->dbWrap($aRow["Amount"],"int").", ";
                     $SQL .= $this->dbWrap(time(),"datetime").");\n";
+                    if(array_key_exists("BlockHeight", $aRow) || array_key_exists("TransactionHash", $aRow)) {
+                        $SQL .= "SELECT LAST_INSERT_ID() INTO @TransactionID;\n";
+                        $SQL .= "INSERT INTO crypto_meta (";
+                        $SQL .= "TransactionID, ";
+                        $SQL .= "Height, ";
+                        $SQL .= "Hash ";
+                        $SQL .= ") VALUES (";
+                        $SQL .= "@TransactionID, ";
+                        $SQL .= $this->dbWrap($aRow["BlockHeight"],"int").", ";
+                        $SQL .= $this->dbWrap($aRow["TransactionHash"],"text").");\n";
+                    }
                 }
             }
             if($SQL == "") return true;
 
             $oRes = $this->db->multi_query($SQL);
             while($this->db->more_results()) $this->db->next_result();
+
+            echo "The Query was:<br />";
+            echo str_replace("\n","<br />",$SQL);
 
             if(!$oRes) {
                 echo "MySQL Query Failed ...<br />";
@@ -268,7 +315,6 @@
             if(is_null($this->fundsID)) return false;
 
             $SQL = "";
-
             foreach($aIDs as $iID) {
 
                 if(!$iID > 0) continue;
@@ -289,6 +335,54 @@
             } else {
                 return true;
             }
+        }
+
+       /**
+        *  Get a list of last used details entries
+        * =========================================
+        *  - Requires a fundsID to be set
+        */
+
+        public function getLastDetails($nCount=10) {
+
+            if(is_null($this->fundsID)) return false;
+
+            $tic = microtime(true);
+
+            $aReturn = array(
+                "Meta" => array(
+                    "Content" => "LastDetauls",
+                    "Count"   => 0,
+                ),
+                "Data" => array(),
+            );
+
+            $SQL  = "SELECT DISTINCT Details ";
+            $SQL .= "FROM transactions ";
+            $SQL .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int")." ";
+            $SQL .= "ORDER BY ID DESC ";
+            $SQL .= "LIMIT 0,".$nCount;
+            $oData = $this->db->query($SQL);
+
+            if(!$oData) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            }
+
+            while($aRow = $oData->fetch_assoc()) {
+                $aReturn["Data"][] = array(
+                    "Details" => $aRow["Details"],
+                );
+            }
+            $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
+
+            $toc = microtime(true);
+            $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
+
+            return $aReturn;
         }
     }
 ?>

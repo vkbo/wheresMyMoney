@@ -15,7 +15,7 @@ body {
 
 h1 {font-size: 2.00em; margin: 0em 0em 0.4em 0em;}
 h2 {font-size: 1.50em; margin: 0em 0em 0.4em 0em;}
-h3 {font-size: 1.15em; margin: 0em 0em 0.4em 0em;}
+h3 {font-size: 1.15em; margin: 0em 0em 0.4em 0em; color: #009900;}
 h4 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
 h5 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
 h6 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
@@ -199,6 +199,31 @@ a:hover {color: #009900; text-decoration: underline;}
  *  Tables
  */
 
+/* Display Table */
+
+.display-table {
+    margin-bottom: 1em;
+    font-size: 1.1em;
+}
+
+.display-table th,
+.display-table td {
+    padding: 2px 4px;
+    white-space: nowrap;
+}
+
+.display-table th {
+    background-color: #d7e7d7;
+    font-weight: bold;
+    text-align: right;
+}
+
+/* List Table */
+
+.list-table {
+    margin-bottom: 1em;
+}
+
 .list-table td {
     padding: 2px 4px;
     white-space: nowrap;
@@ -227,13 +252,48 @@ a:hover {color: #009900; text-decoration: underline;}
     padding: 12px 0 0 0;
 }
 
-/**
- *  Forms
- */
+/* Forms Table */
+
+.form-table {
+    margin-bottom: 1em;
+}
+
+.form-table th,
+.form-table td {
+    padding: 2px 4px;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.form-table th {
+    background-color: #d7e7d7;
+    font-weight: bold;
+    text-align: right;
+}
+
+.input-s {width: 120px;}
+.input-m {width: 240px;}
+.input-w {width: 360px;}
+
+.text-w {
+    width: 360px;
+    height: 4em;
+    resize: none;
+}
+
+.text-raw {
+    width: 640px;
+    height: 40em;
+    resize: none;
+}
 
 .input-button {
     padding: 0;
     text-align: right;
+}
+
+.margin-b {
+    margin-bottom: 4px;
 }
 
 /**
@@ -249,6 +309,8 @@ a:hover {color: #009900; text-decoration: underline;}
     text-overflow: ellipsis;
     width: 100%;
 }
+
+.no-resize {resize: none;}
 
 .left   {text-align: left;}
 .right  {text-align: right;}

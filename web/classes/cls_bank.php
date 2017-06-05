@@ -24,7 +24,7 @@
 
             $aReturn = array(
                 "Meta" => array(
-                    "Content" => "Banks",
+                    "Content" => "Bank",
                     "Count"   => 0,
                 ),
                 "Data" => array(),
