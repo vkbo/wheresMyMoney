@@ -1,7 +1,7 @@
 <?php
    /**
-    *  Where's My Money? – Funds/Funds Parts File
-    * ============================================
+    *  Where's My Money? – Funds/Summary Parts File
+    * ===============================================
     *  Created 2017-05-31
     */
 
@@ -38,7 +38,7 @@
                 echo "<td>Category</td>";
                 echo "<td colspan=2 class='right'>Balance</td>";
                 echo "<td class='tbl-clear'>&nbsp;&nbsp;</td>";
-                echo "<td colspan=2 class='right'>Currency</td>";
+                echo "<td colspan=2 class='right'>Converted</td>";
             echo "</tr>";
             $prevTitle = $currTitle;
             $oddEven   = 0;
@@ -57,7 +57,7 @@
             } else {
                 $xAmount = 0.0;
             }
-            echo "<td class='mono right'>".rdblAmount($xAmount,100,0,4)."</td>";
+            echo "<td class='mono right'>".rdblAmount($xAmount,$aRow["Factor"],0,2)."</td>";
         echo "</tr>";
         $oddEven++;
     }
@@ -67,7 +67,7 @@
     echo "</table>\n";
 
     echo "<div class='toolbox'>";
-    echo "<h3>Exchange Rates</h3>";
+    echo "<h3>Exchange</h3>";
     echo "<h5>Convert to</h5>";
     foreach($aCurrs["Data"] as $aCurr) {
         if(!$aCurr["RefCurrency"]) continue;
@@ -83,13 +83,23 @@
     echo "</tr>";
     foreach($aRates["Data"] as $sISO=>$aRate) {
         echo "<tr>";
-            echo "<td>".$sISO."</td>";
-            echo "<td class='mono right'>".rdblNum($aRate["Rate"],4)."</td>";
+            if($aRate["Rate"] < 0.01) {
+                echo "<td class='mono right'>m".$sISO."</td>";
+                echo "<td class='mono right'>".rdblNum($aRate["Rate"]*1000,4)."</td>";
+            } else {
+                echo "<td class='mono right'>".$sISO."</td>";
+                echo "<td class='mono right'>".rdblNum($aRate["Rate"],4)."</td>";
+            }
             echo "<td>".date($cDateS,$aRate["RateDate"])."</td>";
         echo "</tr>";
     }
     echo "<tr class='list-stats'>";
-        echo "<td colspan=3>Query: ".number_format($aRates["Meta"]["Time"],2)." ms</td>";
+        echo "<td colspan=3>";
+            if($aRates["Meta"]["Pull"]) {
+                echo "<span class='green'>New rates pulled</span><br />";
+            }
+            echo "Query: ".number_format($aRates["Meta"]["Time"],2)." ms";
+        echo "</td>";
     echo "</tr>";
     echo "</table>";
     echo "</div>";

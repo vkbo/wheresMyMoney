@@ -29,6 +29,11 @@
         ),
     );
 
+    // Report User Agent as
+    $cUserAgent  = "User-Agent: Mozilla/5.0 (compatible; PHP script; ";
+    $cUserAgent .= php_uname("s")." ".php_uname("m")."; ";
+    $cUserAgent .= "PHP/".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION.".".PHP_RELEASE_VERSION.")";
+
     // Include Classes
     require_once("classes/cls_bank.php");
     require_once("classes/cls_currency.php");

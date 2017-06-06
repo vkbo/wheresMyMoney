@@ -38,26 +38,6 @@
             return $dbVar;
         }
 
-        private function getJsonData($sAPI) {
-
-            $webOpts    = array("http" => array("header" => "User-Agent: Mozilla/5.0"));
-            $webContext = stream_context_create($webOpts);
-            $jsonData   = @file_get_contents($sAPI,false,$webContext);
-
-            if($jsonData === false) {
-                return false;
-            }
-
-            if(in_array("Content-Encoding: deflate",$http_response_header)) {
-                $jsonData = gzinflate($jsonData);
-                echo getTimeStamp()." Unpacking data\n";
-            }
-
-            return json_decode($jsonData,true);
-        }
-
-        // Methods
-
        /**
         *  Get data from currency table
         * ==============================
@@ -161,6 +141,11 @@
             }
         }
 
+       /**
+        *  Retrieve exchange rate for a given base currency for a given date
+        * ===================================================================
+        */
+
         public function getXRates($dDate,$xBase) {
 
             $tic = microtime(true);
@@ -179,19 +164,27 @@
             if($xBase == "EUR") {
                 $baseRate = 1.0;
                 $baseDate = strtotime(date("Y-m-d",time()));
-            } elseif(array_key_exists($xBase, $aFiat)) {
-                $baseRate = $aFiat[$xBase]["Rate"];
-                $baseDate = $aFiat[$xBase]["RateDate"];
+            } elseif(array_key_exists($xBase, $aFiat["Data"])) {
+                $baseRate = $aFiat["Data"][$xBase]["Rate"];
+                $baseDate = $aFiat["Data"][$xBase]["RateDate"];
             } else {
                 $baseRate = 0.0;
                 $baseDate = 0;
             }
-            foreach($aFiat as $sISO=>$aRate) {
+            foreach($aFiat["Data"] as $sISO=>$aRate) {
                 $aReturn["Data"][$sISO]["Rate"]     = $baseRate == 0 ? 0 : $aRate["Rate"]/$baseRate;
                 $aReturn["Data"][$sISO]["RateDate"] = $aRate["RateDate"];
             }
+
+            $aCrypt = $this->getCrypto($dDate);
+            foreach($aCrypt["Data"] as $sISO=>$aRate) {
+                $aReturn["Data"][$sISO]["Rate"]     = $baseRate == 0 ? 0 : $aRate["Rate"]/$baseRate;
+                $aReturn["Data"][$sISO]["RateDate"] = $aRate["RateDate"];
+            }
+
             $aReturn["Meta"]["Count"]    = count($aReturn["Data"]);
             $aReturn["Meta"]["BaseDate"] = $baseDate;
+            $aReturn["Meta"]["Pull"]     = $aFiat["Meta"]["Pull"] || $aCrypt["Meta"]["Pull"] ;
 
             $toc = microtime(true);
             $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
@@ -199,6 +192,12 @@
             return $aReturn;
         }
 
+       /**
+        *  Private Functions
+        * ===================
+        */
+
+        // Pull latest exchange rates from cache in database
         private function requestXRates($dDate) {
 
             $SQL  = "SELECT ";
@@ -215,7 +214,8 @@
             $SQL .=     "WHERE Date <= ".$this->dbWrap($dDate,"date")." ";
             $SQL .=     "GROUP BY CurrencyID";
             $SQL .= ") AS tmp ON tmp.CurrencyID = c.ID ";
-            $SQL .= "LEFT JOIN euro_exchange AS ee ON ee.Date = tmp.Latest AND ee.CurrencyID = c.ID";
+            $SQL .= "LEFT JOIN euro_exchange AS ee ON ee.Date = tmp.Latest AND ee.CurrencyID = c.ID ";
+            $SQL .= "ORDER BY c.Type ASC, c.ISO ASC ";
             $oData = $this->db->query($SQL);
 
             if(!$oData) {
@@ -240,42 +240,48 @@
             return $aReturn;
         }
 
+        // Extract fiat rates. If not in cache, pull from API
         private function getFiat($dDate) {
 
-            $iDelay  = 15*3600+750; // API is updated at 15:00. Setting delay to 15:15.
+            // Exchange rates pulled from http://fixer.io/
+
+            // API is updated at 16:00. Setting delay to 16:30.
+            // Requests for exchange rates before 16:30 on the current date will look up
+            // yesterday's rates instead.
+            $iDelay  = 16*3600+1500;
             $dDate   = time()-$dDate < $iDelay ? $dDate-$iDelay : $dDate;
             $dDate   = strtotime(date("Y-m-d",$dDate));
-            $sAPI    = "http://api.fixer.io/latest?base=EUR&date=".date("Y-m-d",$dDate);
 
             $bPull   = false;
-            $aReturn = array();
+            $aReturn = array("Meta" => array("Pull" => false));
             $aRates  = $this->requestXRates($dDate);
             foreach($aRates as $sISO=>$aRate) {
                 if($aRate["Type"] != "F") continue;
-                $aReturn[$sISO] = $aRate;
+                $aReturn["Data"][$sISO] = $aRate;
                 if($sISO == "EUR") {
-                    $aReturn[$sISO]["Date"]     = $dDate;
-                    $aReturn[$sISO]["Rate"]     = 1.0;
-                    $aReturn[$sISO]["RateDate"] = $dDate;
+                    $aReturn["Data"][$sISO]["Date"]     = $dDate;
+                    $aReturn["Data"][$sISO]["Rate"]     = 1.0;
+                    $aReturn["Data"][$sISO]["RateDate"] = $dDate;
                     continue;
                 }
                 if($aRate["Date"] != $dDate) $bPull = true;
             }
 
             if($bPull) {
-                $aFiat = $this->getJsonData($sAPI);
+                $sAPI  = "http://api.fixer.io/latest?base=EUR&date=".date("Y-m-d",$dDate);
+                $aJson = $this->getJsonData($sAPI);
                 $SQL   = "";
                 foreach($aRates as $sISO=>$aRate) {
                     if($aRate["Type"] != "F") continue;
                     if($sISO == "EUR") continue;
-                    if(array_key_exists($sISO, $aFiat["rates"])) {
+                    if(array_key_exists($sISO, $aJson["rates"])) {
                         $SQL .= "INSERT INTO euro_exchange (";
                         $SQL .= "Date, CurrencyID, Rate, RateDate, Acquired";
                         $SQL .= ") VALUES (";
                         $SQL .= $this->dbWrap($dDate,"date").", ";
                         $SQL .= $this->dbWrap($aRate["ID"],"int").", ";
-                        $SQL .= $this->dbWrap($aFiat["rates"][$sISO],"float").", ";
-                        $SQL .= $this->dbWrap($aFiat["date"],"text").", ";
+                        $SQL .= $this->dbWrap($aJson["rates"][$sISO],"float").", ";
+                        $SQL .= $this->dbWrap($aJson["date"],"text").", ";
                         $SQL .= $this->dbWrap(time(),"datetime").") ";
                         $SQL .= "ON DUPLICATE KEY UPDATE ";
                         $SQL .= "Date = VALUES(Date), ";
@@ -284,25 +290,113 @@
                         $SQL .= "RateDate = VALUES(RateDate), ";
                         $SQL .= "Acquired = VALUES(Acquired);\n";
                     }
-                    echo "Ping!<br />";
-                    $aReturn[$sISO]["Date"]     = $dDate;
-                    $aReturn[$sISO]["Rate"]     = $aFiat["rates"][$sISO];
-                    $aReturn[$sISO]["RateDate"] = strtotime($aFiat["date"]);
+                    $aReturn["Data"][$sISO]["Date"]     = $dDate;
+                    $aReturn["Data"][$sISO]["Rate"]     = $aJson["rates"][$sISO];
+                    $aReturn["Data"][$sISO]["RateDate"] = strtotime($aJson["date"]);
                 }
-                if($SQL == "") return true;
+                if($SQL != "") {
+                    $oRes = $this->db->multi_query($SQL);
+                    while($this->db->more_results()) $this->db->next_result();
 
-                $oRes = $this->db->multi_query($SQL);
-                while($this->db->more_results()) $this->db->next_result();
-
-                if(!$oRes) {
-                    echo "MySQL Query Failed ...<br />";
-                    echo "Error: ".$this->db->error."<br />";
-                    echo "The Query was:<br />";
-                    echo str_replace("\n","<br />",$SQL);
+                    if(!$oRes) {
+                        echo "MySQL Query Failed ...<br />";
+                        echo "Error: ".$this->db->error."<br />";
+                        echo "The Query was:<br />";
+                        echo str_replace("\n","<br />",$SQL);
+                    }
                 }
             }
+            $aReturn["Meta"]["Pull"] = $bPull;
 
             return $aReturn;
+        }
+
+        // Extract crypto rates. If not in cache, pull from API
+        private function getCrypto($dDate) {
+
+            // Exchange rates pulled from https://www.cryptocompare.com
+
+            // The API call used delivers the coin price at the end of the day.
+            // Therefore this function will only look up values that are from at least the
+            // day before. Snapshot pricing is also available with a different call, and could be
+            // implemented in the future.
+            $iDelay  = 86400;
+            $dDate   = time()-$dDate < $iDelay ? $dDate-$iDelay : $dDate;
+            $dDate   = strtotime(date("Y-m-d",$dDate));
+
+            $bPull   = false;
+            $aReturn = array("Meta" => array("Pull" => false));
+            $aRates  = $this->requestXRates($dDate);
+            $sPull   = "";
+            foreach($aRates as $sISO=>$aRate) {
+                if($aRate["Type"] != "X") continue;
+                if($aRate["Date"] != $dDate) $bPull = true;
+                $aReturn["Data"][$sISO] = $aRate;
+                $sPull .= $sISO.",";
+            }
+
+            if($bPull) {
+                $sAPI   = "https://min-api.cryptocompare.com/data/pricehistorical?";
+                $sAPI  .= "fsym=EUR&tsyms=".rtrim($sPull,",")."&ts=".$dDate;
+                $aJson  = $this->getJsonData($sAPI);
+                $SQL    = "";
+                foreach($aRates as $sISO=>$aRate) {
+                    if($aRate["Type"] != "X") continue;
+                    if(array_key_exists($sISO, $aJson["EUR"])) {
+                        $SQL .= "INSERT INTO euro_exchange (";
+                        $SQL .= "Date, CurrencyID, Rate, RateDate, Acquired";
+                        $SQL .= ") VALUES (";
+                        $SQL .= $this->dbWrap($dDate,"date").", ";
+                        $SQL .= $this->dbWrap($aRate["ID"],"int").", ";
+                        $SQL .= $this->dbWrap($aJson["EUR"][$sISO],"float").", ";
+                        $SQL .= $this->dbWrap($dDate,"date").", ";
+                        $SQL .= $this->dbWrap(time(),"datetime").") ";
+                        $SQL .= "ON DUPLICATE KEY UPDATE ";
+                        $SQL .= "Date = VALUES(Date), ";
+                        $SQL .= "CurrencyID = VALUES(CurrencyID), ";
+                        $SQL .= "Rate = VALUES(Rate), ";
+                        $SQL .= "RateDate = VALUES(RateDate), ";
+                        $SQL .= "Acquired = VALUES(Acquired);\n";
+                    }
+                    $aReturn["Data"][$sISO]["Date"]     = $dDate;
+                    $aReturn["Data"][$sISO]["Rate"]     = $aJson["EUR"][$sISO];
+                    $aReturn["Data"][$sISO]["RateDate"] = $dDate;
+                }
+                if($SQL != "") {
+                    $oRes = $this->db->multi_query($SQL);
+                    while($this->db->more_results()) $this->db->next_result();
+
+                    if(!$oRes) {
+                        echo "MySQL Query Failed ...<br />";
+                        echo "Error: ".$this->db->error."<br />";
+                        echo "The Query was:<br />";
+                        echo str_replace("\n","<br />",$SQL);
+                    }
+                }
+            }
+            $aReturn["Meta"]["Pull"] = $bPull;
+
+            return $aReturn;
+        }
+
+        // Pull and parse JSON data from API
+        private function getJsonData($sAPI) {
+
+            global $cUserAgent;
+
+            $webOpts    = array("http" => array("header" => $cUserAgent));
+            $webContext = stream_context_create($webOpts);
+            $jsonData   = @file_get_contents($sAPI,false,$webContext);
+
+            if($jsonData === false) {
+                return false;
+            }
+
+            if(in_array("Content-Encoding: deflate",$http_response_header)) {
+                $jsonData = gzinflate($jsonData);
+            }
+
+            return json_decode($jsonData,true);
         }
     }
 ?>
