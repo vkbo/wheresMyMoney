@@ -15,10 +15,10 @@ body {
 
 h1 {font-size: 2.00em; margin: 0em 0em 0.4em 0em;}
 h2 {font-size: 1.50em; margin: 0em 0em 0.4em 0em;}
-h3 {font-size: 1.15em; margin: 0em 0em 0.4em 0em; color: #009900;}
-h4 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
-h5 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
-h6 {font-size: 1.00em; margin: 0em 0em 1.0em 0em;}
+h3 {font-size: 1.20em; margin: 0em 0em 0.4em 0em;}
+h4 {font-size: 1.10em; margin: 0em 0em 0.4em 0em; color: #009900;}
+h5 {font-size: 1.00em; margin: 0em 0em 0.4em 0em;}
+h6 {font-size: 1.00em; margin: 0em 0em 0.4em 0em;}
 
 a       {color: #009900; text-decoration: none;}
 a:hover {color: #009900; text-decoration: underline;}
@@ -245,6 +245,12 @@ a:hover {color: #009900; text-decoration: underline;}
     border-bottom: 2px solid #009900;
 }
 
+.list-head .tbl-clear,
+.list-table .tbl-clear {
+    background-color: #ffffff;
+    border: 0;
+}
+
 .list-stats td {
     /*text-align: right;*/
     font-size: 0.8em;
@@ -294,6 +300,17 @@ a:hover {color: #009900; text-decoration: underline;}
 
 .margin-b {
     margin-bottom: 4px;
+}
+
+/* Other */
+
+.toolbox {
+    display: inline-block;
+    margin: 12px 0 12px 20px;
+    vertical-align: top;
+    border: 1px solid #009900;
+    padding: 8px;
+    background-color: #f7f7f7;
 }
 
 /**

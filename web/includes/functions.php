@@ -59,7 +59,7 @@
         return trim(number_format($dValue,$iDecimals,"."," ")." ".$sUnit);
     }
 
-    function rdblAmount($iVal, $iFac=2, $iDec=0, $iMax=12) {
+    function rdblAmount($iVal, $iFac=100, $iDec=0, $iMax=12) {
 
         if(is_null($iVal)) return "";
         if($iDec == 0)     $iDec = log10($iFac);
