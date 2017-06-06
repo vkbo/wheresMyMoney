@@ -16,7 +16,6 @@
 
     if($convertTo != "") {
         $aRates = $theCurrs->getXRates(time(),$convertTo);
-        // print_r($aRates);
     }
 
     $prevTitle = "";
@@ -53,11 +52,12 @@
             echo "<td class='mono'>".$convertTo."</td>";
             if(array_key_exists($aRow["CurrencyISO"], $aRates["Data"])) {
                 $xRate   = $aRates["Data"][$aRow["CurrencyISO"]]["Rate"];
-                $xAmount = $aRow["Balance"]/$xRate;
+                $xFactor = $aRates["Data"][$aRow["CurrencyISO"]]["Factor"];
+                $xAmount = $aRow["Balance"]*$xFactor/$xRate;
             } else {
                 $xAmount = 0.0;
             }
-            echo "<td class='mono right'>".rdblAmount($xAmount,$aRow["Factor"],0,2)."</td>";
+            echo "<td class='mono right'>".rdblAmount($xAmount,$aRates["Base"]["Factor"],0,4)."</td>";
         echo "</tr>";
         $oddEven++;
     }

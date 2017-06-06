@@ -63,7 +63,7 @@
             if($ID > 0) {
                 $SQL .= "AND ID = '".$this->db->real_escape_string($ID)."'";
             }
-            $SQL .= "ORDER BY ISO ";
+            $SQL .= "ORDER BY Type, ISO ";
             $oData = $this->db->query($SQL);
 
             if(!$oData) {
@@ -93,6 +93,11 @@
 
             return $aReturn;
         }
+
+       /**
+        *  Saves data to currency table
+        * ==============================
+        */
 
         public function saveData($aData) {
 
@@ -154,37 +159,51 @@
                 "Meta" => array(
                     "Content"  => "XRates",
                     "Count"    => 0,
-                    "Base"     => $xBase,
-                    "BaseDate" => 0,
+                ),
+                "Base" => array(
+                    "ISO"    => $xBase,
+                    "Date"   => 0,
+                    "Factor" => 1,
                 ),
                 "Data" => array(),
             );
 
-            $aFiat = $this->getFiat($dDate);
+            $aFiat  = $this->getFiat($dDate);
+            $aCrypt = $this->getCrypto($dDate);
+
             if($xBase == "EUR") {
                 $baseRate = 1.0;
                 $baseDate = strtotime(date("Y-m-d",time()));
+                $baseFac  = 100;
             } elseif(array_key_exists($xBase, $aFiat["Data"])) {
                 $baseRate = $aFiat["Data"][$xBase]["Rate"];
                 $baseDate = $aFiat["Data"][$xBase]["RateDate"];
+                $baseFac  = $aFiat["Data"][$xBase]["Factor"];
+            } elseif(array_key_exists($xBase, $aCrypt["Data"])) {
+                $baseRate = $aCrypt["Data"][$xBase]["Rate"];
+                $baseDate = $aCrypt["Data"][$xBase]["RateDate"];
+                $baseFac  = $aCrypt["Data"][$xBase]["Factor"];
             } else {
                 $baseRate = 0.0;
                 $baseDate = 0;
+                $baseFac  = 1;
             }
+
             foreach($aFiat["Data"] as $sISO=>$aRate) {
                 $aReturn["Data"][$sISO]["Rate"]     = $baseRate == 0 ? 0 : $aRate["Rate"]/$baseRate;
                 $aReturn["Data"][$sISO]["RateDate"] = $aRate["RateDate"];
+                $aReturn["Data"][$sISO]["Factor"]   = $baseFac/$aRate["Factor"];
             }
-
-            $aCrypt = $this->getCrypto($dDate);
             foreach($aCrypt["Data"] as $sISO=>$aRate) {
                 $aReturn["Data"][$sISO]["Rate"]     = $baseRate == 0 ? 0 : $aRate["Rate"]/$baseRate;
                 $aReturn["Data"][$sISO]["RateDate"] = $aRate["RateDate"];
+                $aReturn["Data"][$sISO]["Factor"]   = $baseFac/$aRate["Factor"];
             }
 
-            $aReturn["Meta"]["Count"]    = count($aReturn["Data"]);
-            $aReturn["Meta"]["BaseDate"] = $baseDate;
-            $aReturn["Meta"]["Pull"]     = $aFiat["Meta"]["Pull"] || $aCrypt["Meta"]["Pull"] ;
+            $aReturn["Meta"]["Count"]  = count($aReturn["Data"]);
+            $aReturn["Base"]["Date"]   = $baseDate;
+            $aReturn["Base"]["Factor"] = $baseFac;
+            $aReturn["Meta"]["Pull"]   = $aFiat["Meta"]["Pull"] || $aCrypt["Meta"]["Pull"] ;
 
             $toc = microtime(true);
             $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
@@ -204,6 +223,7 @@
             $SQL .= "c.ID AS ID, ";
             $SQL .= "c.ISO AS ISO, ";
             $SQL .= "c.Type AS Type, ";
+            $SQL .= "c.Factor AS Factor, ";
             $SQL .= "ee.Date AS Date, ";
             $SQL .= "ee.Rate AS Rate, ";
             $SQL .= "ee.RateDate AS RateDate ";
@@ -231,6 +251,7 @@
                 $aReturn[$aRow["ISO"]] = array(
                     "ID"       => $aRow["ID"],
                     "Type"     => $aRow["Type"],
+                    "Factor"   => $aRow["Factor"],
                     "Date"     => strtotime($aRow["Date"]),
                     "Rate"     => $aRow["Rate"],
                     "RateDate" => strtotime($aRow["RateDate"]),
