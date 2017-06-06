@@ -5,16 +5,11 @@
     *  Created 2017-05-31
     */
 
-    class Bank
+    class Bank extends DataBase
     {
-        // Publics
-
-        // Privates
-        private $db;
-
         // Constructor
         function __construct($oDB) {
-            $this->db = $oDB;
+            parent::__construct($oDB);
         }
 
         // Methods

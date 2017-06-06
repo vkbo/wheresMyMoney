@@ -5,37 +5,11 @@
     *  Created 2017-06-05
     */
 
-    class Currency
+    class Currency extends DataBase
     {
-        // Privates
-        private $db;
-
         // Constructor
         function __construct($oDB) {
-            $this->db = $oDB;
-        }
-
-        // Wrappers
-        private function dbWrap($dbVar,$varType="text") {
-
-            switch($varType) {
-            case "text":
-                $dbVar = $dbVar === null ? "NULL" : "'".$this->db->real_escape_string($dbVar)."'";
-                break;
-            case "int":
-                $dbVar = $dbVar === null ? "NULL" : intval($dbVar);
-                break;
-            case "float":
-                $dbVar = $dbVar === null ? "NULL" : floatval($dbVar);
-                break;
-            case "date":
-                $dbVar = $dbVar === null ? "NULL" : date("'Y-m-d'",$dbVar);
-                break;
-            case "datetime":
-                $dbVar = $dbVar === null ? "NULL" : date("'Y-m-d H:i:s'",$dbVar);
-                break;
-            }
-            return $dbVar;
+            parent::__construct($oDB);
         }
 
        /**

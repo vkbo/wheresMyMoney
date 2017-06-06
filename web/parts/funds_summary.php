@@ -86,6 +86,9 @@
             if($aRate["Rate"] < 0.01) {
                 echo "<td class='mono right'>m".$sISO."</td>";
                 echo "<td class='mono right'>".rdblNum($aRate["Rate"]*1000,4)."</td>";
+            } elseif($aRate["Rate"] > 1000) {
+                echo "<td class='mono right'>k".$sISO."</td>";
+                echo "<td class='mono right'>".rdblNum($aRate["Rate"]/1000,4)."</td>";
             } else {
                 echo "<td class='mono right'>".$sISO."</td>";
                 echo "<td class='mono right'>".rdblNum($aRate["Rate"],4)."</td>";

@@ -35,9 +35,11 @@
     $cUserAgent .= "PHP/".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION.".".PHP_RELEASE_VERSION.")";
 
     // Include Classes
+    require_once("classes/cls_database.php");
     require_once("classes/cls_bank.php");
     require_once("classes/cls_currency.php");
     require_once("classes/cls_funds.php");
+    require_once("classes/cls_settings.php");
     require_once("classes/cls_transactions.php");
 
     // Include functions

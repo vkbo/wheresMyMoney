@@ -5,15 +5,14 @@
     *  Created 2017-05-31
     */
 
-    class Funds
+    class Funds extends DataBase
     {
         // Variables
-        private $db;
         private $year;
 
         // Constructor
         function __construct($oDB) {
-            $this->db   = $oDB;
+            parent::__construct($oDB);
             $this->year = date("Y",time());
         }
 
