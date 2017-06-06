@@ -5,8 +5,9 @@
     *  Created 2017-06-01
     */
 
-    $bMain = true;
+    $bMain  = true;
     require_once("includes/init.php");
+    $theOpt = new Settings($oDB);
 
     $dataType = htmGet("Type",1,false,"Trans");
     $dataID   = htmGet("ID",0,false,0);

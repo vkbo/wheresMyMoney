@@ -5,8 +5,9 @@
     *  Created 2017-05-31
     */
 
-    $bMain = true;
+    $bMain  = true;
     require_once("includes/init.php");
+    $theOpt = new Settings($oDB);
 
     $sView    = htmGet("Part",1,false,"Summary");
     $doAction = htmGet("Action",1,false,"List");

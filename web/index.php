@@ -5,8 +5,9 @@
     *  Created 2017-05-30
     */
 
-    $bMain = true;
+    $bMain  = true;
     require_once("includes/init.php");
+    $theOpt = new Settings($oDB);
 
     /**
      *  Page Content

@@ -5,7 +5,8 @@
     *  Created 2017-05-31
     */
 
-    $convertTo = htmGet("ConvertTo",1,false,"");
+    $convertTo = $theOpt->getValue("BaseCurrency");
+    $convertTo = htmGet("ConvertTo",1,false,$convertTo);
     $thisPage  = "funds.php?Part=Summary";
 
     $theFunds  = new Funds($oDB);
@@ -15,6 +16,7 @@
     $aCurrs    = $theCurrs->getData();
 
     if($convertTo != "") {
+        $theOpt->setValue("BaseCurrency",$convertTo);
         $aRates = $theCurrs->getXRates(time(),$convertTo);
     }
 
