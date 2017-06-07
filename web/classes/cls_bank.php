@@ -13,7 +13,7 @@
         }
 
         // Methods
-        public function getEntry($ID=0) {
+        public function getData($ID=0) {
 
             $tic = microtime(true);
 

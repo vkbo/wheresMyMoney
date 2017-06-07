@@ -7,6 +7,7 @@
 
     $convertTo = $theOpt->getValue("BaseCurrency");
     $convertTo = htmGet("ConvertTo",1,false,$convertTo);
+    $thisFile  = "funds.php";
     $thisPage  = "funds.php?Part=Summary";
 
     $theFunds  = new Funds($oDB);
@@ -24,6 +25,11 @@
     echo "<div class='content-wrapper'>\n";
     echo "<div class='content-main'>\n";
     // ========================
+
+    echo "<div>";
+        echo "<b>Actions:</b>&nbsp;";
+        echo "<a href='".$thisFile."?Part=Funds&Action=New'>Add New</a>";
+    echo "</div><br />\n";
 
     $prevTitle = "";
     $oddEven   = 0;

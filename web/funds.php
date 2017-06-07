@@ -15,6 +15,7 @@
         "Summary" => array("Title"=>"Funds Summary","Menu"=>"Summary","URL"=>"funds.php?Part=Summary"),
         "Banks"   => array("Title"=>"Manage Banks", "Menu"=>"Banks",  "URL"=>"funds.php?Part=Banks"),
         "Trans"   => array("Title"=>"Transactions", "Menu"=>"",       "URL"=>""),
+        "Funds"   => array("Title"=>"Funds",        "Menu"=>"",       "URL"=>""),
     );
 
    /**
@@ -34,6 +35,13 @@
                 case "Edit": include_once("parts/transaction_edit.php");   break;
                 case "New":  include_once("parts/transaction_edit.php");   break;
                 case "Save": include_once("parts/transaction_save.php");   break;
+                default: echo "<p>Nothing to display.</p>"; break;
+            }; break;
+        case "Funds":
+            switch($doAction) {
+                case "Edit": include_once("parts/funds_edit.php"); break;
+                case "New":  include_once("parts/funds_edit.php"); break;
+                case "Save": include_once("parts/funds_save.php"); break;
                 default: echo "<p>Nothing to display.</p>"; break;
             }; break;
         default: echo "<p>Nothing to display.</p>"; break;

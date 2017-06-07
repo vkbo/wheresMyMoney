@@ -55,7 +55,9 @@
 
     echo "<div>";
         echo "<b>Actions:</b>&nbsp;";
-        echo "<a href='import.php?Type=Trans&ID=".$fundsID."'>Import</a>";
+        echo "<a href='funds.php?Part=Funds&Action=Edit&ID=".$fundsID."'>Edit Funds</a>";
+        echo "&nbsp;|&nbsp;";
+        echo "<a href='import.php?Type=Trans&ID=".$fundsID."'>Import Entries</a>";
         echo "&nbsp;|&nbsp;";
         echo "<a href='".$thisPage."&Action=New'>Add Entry</a>";
         echo "&nbsp;|&nbsp;";

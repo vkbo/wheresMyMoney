@@ -104,7 +104,7 @@
             echo "<select name='CurrencyID'>";
                 echo "<option value=''>&nbsp;</option>";
                 foreach($aCurrs["Data"] as $aRow) {
-                    echo "<option value='".$aRow["ID"].($frmCurrencyID==$aRow["ID"]?" selected":"")."'>".$aRow["ISO"]."</option>";
+                    echo "<option value='".$aRow["ID"]."'".($frmCurrencyID==$aRow["ID"]?" selected":"").">".$aRow["ISO"]."</option>";
                 }
             echo "</select>";
         echo "</td>";

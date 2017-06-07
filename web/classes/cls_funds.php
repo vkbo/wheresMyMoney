@@ -36,6 +36,8 @@
             $SQL .= "f.SwiftIBAN AS SwiftIBAN, ";
             $SQL .= "f.Type AS Type, ";
             $SQL .= "f.Category AS Category, ";
+            $SQL .= "f.BankID AS BankID, ";
+            $SQL .= "f.CurrencyID AS CurrencyID, ";
             $SQL .= "f.Opened AS Opened, ";
             $SQL .= "f.Closed AS Closed, ";
             $SQL .= "b.Name AS BankName, ";
@@ -68,7 +70,7 @@
                 $SQL .= "AND f.ID = '".$this->db->real_escape_string($ID)."' ";
             }
             $SQL .= "GROUP BY f.ID ";
-            $SQL .= "ORDER BY FIELD(f.Type,'B','C','X'), b.ID ASC, FIELD(f.Category,'P','S'), f.ID ASC ";
+            $SQL .= "ORDER BY FIELD(f.Type,'B','C','X'), b.ID ASC, FIELD(f.Category,'P','S','C'), f.ID ASC ";
             $oData = $this->db->query($SQL);
 
             if(!$oData) {
@@ -86,8 +88,10 @@
                     "SwiftIBAN"     => $aRow["SwiftIBAN"],
                     "Type"          => $aRow["Type"],
                     "Category"      => $aRow["Category"],
-                    "Opened"        => $aRow["Opened"],
-                    "Closed"        => $aRow["Closed"],
+                    "BankID"        => $aRow["BankID"],
+                    "CurrencyID"    => $aRow["CurrencyID"],
+                    "Opened"        => strtotime($aRow["Opened"]),
+                    "Closed"        => strtotime($aRow["Closed"]),
                     "BankName"      => $aRow["BankName"],
                     "CurrencyISO"   => $aRow["CurrencyISO"],
                     "Factor"        => $aRow["Factor"],
@@ -102,6 +106,64 @@
             $aReturn["Meta"]["Time"] = $toc-$tic;
 
             return $aReturn;
+        }
+
+        public function saveData($aData) {
+
+            $SQL = "";
+            foreach($aData as $iKey=>$aRow) {
+
+                $updateID = array_key_exists("ID",$aRow) ? $aRow["ID"] : 0;
+
+                if($updateID > 0) {
+                    $SQL .= "UPDATE funds SET ";
+                    $SQL .= "Name = "         .$this->dbWrap($aRow["Name"],"text").", ";
+                    $SQL .= "AccountNumber = ".$this->dbWrap($aRow["AccountNumber"],"text").", ";
+                    $SQL .= "SwiftIBAN = "    .$this->dbWrap($aRow["SwiftIBAN"],"text").", ";
+                    $SQL .= "Type = "         .$this->dbWrap($aRow["Type"],"text").", ";
+                    $SQL .= "Category = "     .$this->dbWrap($aRow["Category"],"text").", ";
+                    $SQL .= "BankID = "       .$this->dbWrap($aRow["BankID"],"int").", ";
+                    $SQL .= "CurrencyID = "   .$this->dbWrap($aRow["CurrencyID"],"int")." ";
+                    $SQL .= "Opened = "       .$this->dbWrap($aRow["Opened"],"date")." ";
+                    $SQL .= "Closed = "       .$this->dbWrap($aRow["Closed"],"date")." ";
+                    $SQL .= "WHERE ID = "     .$this->dbWrap($aRow["ID"],"int").";\n";
+                } else {
+                    $SQL .= "INSERT INTO funds (";
+                    $SQL .= "Name, ";
+                    $SQL .= "AccountNumber, ";
+                    $SQL .= "SwiftIBAN, ";
+                    $SQL .= "Type, ";
+                    $SQL .= "Category, ";
+                    $SQL .= "BankID, ";
+                    $SQL .= "CurrencyID, ";
+                    $SQL .= "Opened, ";
+                    $SQL .= "Closed ";
+                    $SQL .= ") VALUES (";
+                    $SQL .= $this->dbWrap($aRow["Name"],"text").", ";
+                    $SQL .= $this->dbWrap($aRow["AccountNumber"],"text").", ";
+                    $SQL .= $this->dbWrap($aRow["SwiftIBAN"],"text").", ";
+                    $SQL .= $this->dbWrap($aRow["Type"],"text").", ";
+                    $SQL .= $this->dbWrap($aRow["Category"],"text").", ";
+                    $SQL .= $this->dbWrap($aRow["BankID"],"int").", ";
+                    $SQL .= $this->dbWrap($aRow["CurrencyID"],"int").", ";
+                    $SQL .= $this->dbWrap($aRow["Opened"],"date").", ";
+                    $SQL .= $this->dbWrap($aRow["Closed"],"date").");\n";
+                }
+            }
+            if($SQL == "") return true;
+
+            $oRes = $this->db->multi_query($SQL);
+            while($this->db->more_results()) $this->db->next_result();
+
+            if(!$oRes) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 ?>

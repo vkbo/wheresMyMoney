@@ -265,9 +265,6 @@
             $oRes = $this->db->multi_query($SQL);
             while($this->db->more_results()) $this->db->next_result();
 
-            echo "The Query was:<br />";
-            echo str_replace("\n","<br />",$SQL);
-
             if(!$oRes) {
                 echo "MySQL Query Failed ...<br />";
                 echo "Error: ".$this->db->error."<br />";
