@@ -70,7 +70,7 @@
     }
     echo "<tr class='list-stats'>";
         echo "<td colspan=8>";
-            echoTiming($aRates["Meta"]["Time"]);
+            echoTiming($aFunds["Meta"]["Time"]);
         echo "</td>";
     echo "</tr>\n";
     echo "</table>\n";
@@ -112,10 +112,10 @@
     }
     echo "<tr class='list-stats'>";
         echo "<td colspan=3>";
-            if($aRates["Meta"]["Pull"]) {
-                echo "<span class='green'>New rates pulled</span><br />";
-            }
             echoTiming($aRates["Meta"]["Time"]);
+            if($aRates["Meta"]["Pull"]) {
+                echo "<span class='green'>&nbsp;[Pulled New]</span><br />";
+            }
         echo "</td>";
     echo "</tr>\n";
     echo "</table>\n";

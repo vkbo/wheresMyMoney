@@ -125,7 +125,7 @@
     function cleanAmountString($sValue, $iFactor) {
         $iComma = strrpos($sValue, ",");
         if($iComma !== false) {
-            $sValue = substr_replace($sValue, ".", $iComme, 1);
+            $sValue = substr_replace($sValue, ".", $iComma, 1);
         }
         $sValue = str_replace(" ", "", $sValue);
         $sValue = str_replace(",", "", $sValue);
