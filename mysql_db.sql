@@ -63,6 +63,7 @@ CREATE TABLE `funds` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(45) DEFAULT NULL,
   `AccountNumber` varchar(128) DEFAULT NULL,
+  `SwiftIBAN` varchar(100) DEFAULT NULL,
   `Type` varchar(2) DEFAULT NULL,
   `Category` varchar(2) DEFAULT NULL,
   `BankID` int(11) DEFAULT NULL,

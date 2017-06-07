@@ -33,4 +33,8 @@
             if($p < $nPages) echo "&nbsp;|&nbsp;";
         }
     }
+
+    function echoTiming($timeValue, $timeLabel="Query") {
+        echo $timeLabel.": ".rdblSmallNum($timeValue,2,"s",1);
+    }
 ?>

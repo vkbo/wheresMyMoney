@@ -59,6 +59,32 @@
         return trim(number_format($dValue,$iDecimals,"."," ")." ".$sUnit);
     }
 
+    function rdblBigNum($dValue, $iDecimals=2, $sUnit="", $maxIt=6) {
+        $dValue = floatval($dValue);
+        if(is_infinite($dValue)) return "&infin; ".$sUnit;
+        if(is_null($dValue))     return "";
+        $aScale = array("","k","M","G","T","P","E");
+        $iScale = 0;
+        while($dValue >= 1000.0 && $iScale < $maxIt) {
+            $dValue /= 1000.0;
+            $iScale++;
+        }
+        return trim(number_format($dValue,$iDecimals,"."," ")." ".$aScale[$iScale].$sUnit);
+    }
+
+    function rdblSmallNum($dValue, $iDecimals=2, $sUnit="", $maxIt=6) {
+        $dValue = floatval($dValue);
+        if(is_infinite($dValue)) return "&infin; ".$sUnit;
+        if(is_null($dValue))     return "";
+        $aScale = array("","m","µ","n","p","f","a");
+        $iScale = 0;
+        while($dValue < 1.0 && $iScale < $maxIt) {
+            $dValue *= 1000.0;
+            $iScale++;
+        }
+        return trim(number_format($dValue,$iDecimals,"."," ")." ".$aScale[$iScale].$sUnit);
+    }
+
     function rdblAmount($iVal, $iFac=100, $iDec=0, $iMax=12) {
 
         if(is_null($iVal)) return "";

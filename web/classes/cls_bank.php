@@ -39,7 +39,7 @@
             $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
 
             $toc = microtime(true);
-            $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
+            $aReturn["Meta"]["Time"] = $toc-$tic;
 
             return $aReturn;
         }

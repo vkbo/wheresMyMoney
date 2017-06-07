@@ -33,6 +33,7 @@
             $SQL .= "f.ID AS ID, ";
             $SQL .= "f.Name AS FundsName, ";
             $SQL .= "f.AccountNumber AS AccountNumber, ";
+            $SQL .= "f.SwiftIBAN AS SwiftIBAN, ";
             $SQL .= "f.Type AS Type, ";
             $SQL .= "f.Category AS Category, ";
             $SQL .= "f.Opened AS Opened, ";
@@ -82,6 +83,7 @@
                     "ID"            => $aRow["ID"],
                     "FundsName"     => $aRow["FundsName"],
                     "AccountNumber" => $aRow["AccountNumber"],
+                    "SwiftIBAN"     => $aRow["SwiftIBAN"],
                     "Type"          => $aRow["Type"],
                     "Category"      => $aRow["Category"],
                     "Opened"        => $aRow["Opened"],
@@ -97,7 +99,7 @@
             $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
 
             $toc = microtime(true);
-            $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
+            $aReturn["Meta"]["Time"] = $toc-$tic;
 
             return $aReturn;
         }

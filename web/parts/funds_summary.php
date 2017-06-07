@@ -20,9 +20,14 @@
         $aRates = $theCurrs->getXRates(time(),$convertTo);
     }
 
+    // Start Two Column Content
+    echo "<div class='content-wrapper'>\n";
+    echo "<div class='content-main'>\n";
+    // ========================
+
     $prevTitle = "";
     $oddEven   = 0;
-    echo "<table class='list-table' style='display: inline-block;'>\n";
+    echo "<table class='list-table'>\n";
     foreach($aFunds["Data"] as $aRow) {
         $currTitle = $aRow["Type"].$aRow["BankName"];
         if($currTitle != $prevTitle) {
@@ -32,7 +37,7 @@
                 } else {
                     echo "<td colspan=5>".$cTypes["Funds"][$aRow["Type"]]."</td>";
                 }
-            echo "</tr>";
+            echo "</tr>\n";
             echo "<tr class='list-head'>";
                 echo "<td>Name</td>";
                 echo "<td>Account Number</td>";
@@ -40,7 +45,7 @@
                 echo "<td colspan=2 class='right'>Balance</td>";
                 echo "<td class='tbl-clear'>&nbsp;&nbsp;</td>";
                 echo "<td colspan=2 class='right'>Converted</td>";
-            echo "</tr>";
+            echo "</tr>\n";
             $prevTitle = $currTitle;
             $oddEven   = 0;
         }
@@ -60,29 +65,36 @@
                 $xAmount = 0.0;
             }
             echo "<td class='mono right'>".rdblAmount($xAmount,$aRates["Base"]["Factor"],0,4)."</td>";
-        echo "</tr>";
+        echo "</tr>\n";
         $oddEven++;
     }
     echo "<tr class='list-stats'>";
-        echo "<td colspan=8>Query: ".number_format($aFunds["Meta"]["Time"],2)." ms</td>";
-    echo "</tr>";
+        echo "<td colspan=8>";
+            echoTiming($aRates["Meta"]["Time"]);
+        echo "</td>";
+    echo "</tr>\n";
     echo "</table>\n";
 
-    echo "<div class='toolbox'>";
-    echo "<h3>Exchange</h3>";
-    echo "<h5>Convert to</h5>";
+    // Separate Two Column Content
+    echo "</div>\n";
+    echo "<div class='content-aside'>\n";
+    // ===========================
+
+    echo "<div class='toolbox'>\n";
+    echo "<h3>Exchange</h3>\n";
+    echo "<h5>Convert to</h5>\n";
     foreach($aCurrs["Data"] as $aCurr) {
         if(!$aCurr["RefCurrency"]) continue;
         echo "<div><a href='".$thisPage."&ConvertTo=".$aCurr["ISO"]."'>".$aCurr["ISO"]." - ".$aCurr["Name"]."</a></div>";
     }
-    echo "<br />";
-    echo "<h5>Rates</h5>";
-    echo "<table class='list-table'>";
+    echo "<br />\n";
+    echo "<h5>Rates</h5>\n";
+    echo "<table class='list-table'>\n";
     echo "<tr class='list-head'>";
         echo "<td>ISO</td>";
         echo "<td>Rate</td>";
         echo "<td>Date</td>";
-    echo "</tr>";
+    echo "</tr>\n";
     foreach($aRates["Data"] as $sISO=>$aRate) {
         echo "<tr>";
             if($aRate["Rate"] < 0.01) {
@@ -96,17 +108,22 @@
                 echo "<td class='mono right'>".rdblNum($aRate["Rate"],4)."</td>";
             }
             echo "<td>".date($cDateS,$aRate["RateDate"])."</td>";
-        echo "</tr>";
+        echo "</tr>\n";
     }
     echo "<tr class='list-stats'>";
         echo "<td colspan=3>";
             if($aRates["Meta"]["Pull"]) {
                 echo "<span class='green'>New rates pulled</span><br />";
             }
-            echo "Query: ".number_format($aRates["Meta"]["Time"],2)." ms";
+            echoTiming($aRates["Meta"]["Time"]);
         echo "</td>";
-    echo "</tr>";
-    echo "</table>";
-    echo "</div>";
+    echo "</tr>\n";
+    echo "</table>\n";
+    echo "</div>\n";
+
+    // End Two Column Content
+    echo "</div>\n";
+    echo "</div>\n";
+    // ======================
 
 ?>

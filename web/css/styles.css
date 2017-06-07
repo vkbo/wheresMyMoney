@@ -240,6 +240,10 @@ a:hover {color: #009900; text-decoration: underline;}
     font-weight: bold;
 }
 
+.list-section:first-child td {
+    padding: 0 4px 2px 0;
+}
+
 .list-head td {
     font-weight: bold;
     border-bottom: 2px solid #009900;
@@ -247,6 +251,7 @@ a:hover {color: #009900; text-decoration: underline;}
 
 .list-head .tbl-clear,
 .list-table .tbl-clear {
+    width: 1.5em;
     background-color: #ffffff;
     border: 0;
 }
@@ -302,14 +307,32 @@ a:hover {color: #009900; text-decoration: underline;}
     margin-bottom: 4px;
 }
 
-/* Other */
+/**
+ *  Two Column Wrappers
+ */
+
+.content-wrapper {
+    display: table;
+    width: 100%;
+}
+
+.content-main {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.content-aside {
+    display: table-cell;;
+    vertical-align: top;
+    text-align: right;
+    padding-left: 20px;
+}
 
 .toolbox {
     display: inline-block;
-    margin: 12px 0 12px 20px;
-    vertical-align: top;
     border: 1px solid #009900;
     padding: 8px;
+    text-align: left;
     background-color: #f7f7f7;
 }
 
