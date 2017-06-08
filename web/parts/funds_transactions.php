@@ -78,20 +78,21 @@
     echo "</div><br />\n";
 
     $oddEven = 0;
-    $nCols   = 6;
+    $nCols   = 8;
     echo "<table class='list-table'>\n";
     echo "<tr class='list-head'>";
         echo "<td><img src='images/icon_accounts.png' /></td>";
         echo "<td>Date</td>";
         echo "<td>Details</td>";
         if($fundsType == "X") {
-            $nCols = 7;
+            $nCols = 9;
             echo "<td>Tr. Hash</td>";
             echo "<td>Height</td>";
         } else {
             echo "<td>Tr. Date</td>";
         }
         echo "<td colspan=2 class='right'>Currency</td>";
+        echo "<td class='right'>Rate</td>";
         echo "<td class='right'>Amount</td>";
         // echo "<td colspan=2>&nbsp;</td>";
     echo "</tr>";
@@ -112,7 +113,9 @@
                 echo "<td>".rdblDate($aRow["TransactionDate"],$cDateS)."</td>";
             }
             echo "<td class='mono'>".$aRow["Currency"]."</td>";
+            $xRate = $aRow["Original"] === null ? "&nbsp;" : rdblNum($aRow["Amount"]/$aRow["Original"],3);
             echo "<td class='mono right'>".rdblAmount($aRow["Original"],$aRow["CurrencyFac"])."</td>";
+            echo "<td class='mono right blue'>".$xRate."</td>";
             echo "<td class='mono right'>".rdblAmount($aRow["Amount"],$fundsFac)."</td>";
             // echo "<td><a href='".$thisPage."&Action=Edit&ID=".$aRow["ID"]."' title='Edit'>";
             //     echo "<img src='images/icon_gtk_edit_col.png' alt='Edit' /></a></td>";

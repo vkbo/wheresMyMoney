@@ -220,5 +220,45 @@
 
             return $aReturn;
         }
+
+        public function toAccount() {
+
+            $tic = microtime(true);
+
+            $aReturn = array(
+                "Meta" => array(
+                    "Content" => "AccountingCount",
+                    "Count"   => 0,
+                ),
+                "Data" => array(),
+            );
+
+            $SQL  = "SELECT ";
+            $SQL .= "SUM((t.Amount - IF(a.Total IS NULL, 0, a.Total)) <> 0) AS ToDo ";
+            $SQL .= "FROM transactions AS t ";
+            $SQL .= "LEFT JOIN (";
+            $SQL .=     "SELECT TransactionID, ";
+            $SQL .=     "COUNT(ID) AS Count, ";
+            $SQL .=     "SUM(Amount) AS Total ";
+            $SQL .=     "FROM accounting GROUP BY TransactionID";
+            $SQL .= ") AS a ON t.ID = a.TransactionID ";
+            $SQL .= "WHERE t.Locked IS NULL ";
+            $oData = $this->db->query($SQL);
+
+            if(!$oData) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            }
+
+            $aReturn["Data"] = $oData->fetch_assoc();;
+
+            $toc = microtime(true);
+            $aReturn["Meta"]["Time"] = $toc-$tic;
+
+            return $aReturn;
+        }
     }
 ?>

@@ -21,6 +21,7 @@
     $theFunds->setFilter("Year",$showYear);
     $aFunds    = $theFunds->getData();
     $aYears    = $theFunds->getYears();
+    $aToDo     = $theFunds->toAccount();
 
     $theCurrs  = new Currency($oDB);
     $aCurrs    = $theCurrs->getData();
@@ -37,6 +38,25 @@
             echo "<a href='".$thisPage."&Year=".$selYear."'>".$selYear."</a>";
             if($selYear !== end($aYears)) echo "&nbsp;|&nbsp;";
         }
+        echo "<div class='floatr'>";
+            echo "[&nbsp;";
+                echo "<a href='funds.php?Part=Funds&Action=New'>Add Funds</a>";
+            echo "&nbsp;]";
+        echo "</div>";
+    echo "</div><br />\n";
+
+    $nToDo = $aToDo["Data"]["ToDo"];
+    if($nToDo == 0) {
+        $sCol = "msg-ok";
+    } elseif($nToDo > 0 && $nToDo < 50) {
+        $sCol = "msg-warn";
+    } else {
+        $sCol = "msg-err";
+    }
+    echo "<div class='".$sCol."'>";
+        echo $nToDo." transactions need accounting. [";
+        echoTiming($aToDo["Meta"]["Time"]);
+        echo "]";
     echo "</div><br />\n";
 
     $prevTitle = "";

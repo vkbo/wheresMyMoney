@@ -15,7 +15,7 @@
         "Summary" => array("Title"=>"Funds Summary","Menu"=>"Summary",  "URL"=>"funds.php?Part=Summary"),
         "Banks"   => array("Title"=>"Manage Banks", "Menu"=>"Banks",    "URL"=>"funds.php?Part=Banks"),
         "Trans"   => array("Title"=>"Transactions", "Menu"=>"",         "URL"=>""),
-        "Funds"   => array("Title"=>"Add Funds",    "Menu"=>"Add Funds","URL"=>"funds.php?Part=Funds&Action=New"),
+        "Funds"   => array("Title"=>"Add Funds",    "Menu"=>"",         "URL"=>""),
     );
 
    /**

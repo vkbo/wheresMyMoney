@@ -9,7 +9,13 @@
     $theAccs   = new Accounts($oDB);
     $aAccounts = $theAccs->getData();
 
-    echo "<a href='".$thisPage."&Action=New'>Add Account</a>";
+    echo "<div>";
+        echo "<div class='floatr'>";
+            echo "[&nbsp;";
+                echo "<a href='".$thisPage."&Action=New'>Add Account</a>";
+            echo "&nbsp;]";
+        echo "</div>";
+    echo "</div><br />\n";
 
     $prevTitle = "";
     $oddEven   = 0;

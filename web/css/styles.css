@@ -360,6 +360,7 @@ a:hover {color: #009900; text-decoration: underline;}
 .black  {color: #000000;}
 .green  {color: #008800;}
 .red    {color: #880000;}
+.blue   {color: #000088;}
 .orange {color: #aa6600;}
 
 .even   {background-color: #f7f7f7;}
@@ -370,6 +371,30 @@ a:hover {color: #009900; text-decoration: underline;}
 .r-odd  {background-color: #e7d7d7;}
 .o-even {background-color: #f7f0d7;}
 .o-odd  {background-color: #e7e0c7;}
+
+.msg-ok {
+    background-color: #e7f7e7;
+    color: #008800;
+    border: 1px solid #008800;
+    padding: 8px;
+    display: block;
+}
+
+.msg-warn {
+    background-color: #f7f0d7;
+    color: #aa6600;
+    border: 1px solid #aa6600;
+    padding: 8px;
+    display: block;
+}
+
+.msg-err {
+    background-color: #f7e7e7;
+    color: #880000;
+    border: 1px solid #880000;
+    padding: 8px;
+    display: block;
+}
 
 /**
  *  Print Styles
