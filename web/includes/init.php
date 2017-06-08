@@ -27,7 +27,7 @@
             "S" => "Savings",
             "C" => "Credit",
         ),
-        "AccTypes" = array(
+        "AccTypes" => array(
             "A" => "Assets",
             "L" => "Liabilities",
             "I" => "Income",
@@ -43,6 +43,7 @@
 
     // Include Classes
     require_once("classes/cls_database.php");
+    require_once("classes/cls_accounts.php");
     require_once("classes/cls_bank.php");
     require_once("classes/cls_currency.php");
     require_once("classes/cls_funds.php");

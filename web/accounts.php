@@ -26,7 +26,14 @@
 
     switch($sView) {
         case "Summary":  include_once("parts/accounts_summary.php");  break;
-        case "Accounts": include_once("parts/accounts_accounts.php"); break;
+        case "Accounts":
+            switch($doAction) {
+                case "List": include_once("parts/accounts_accounts.php"); break;
+                case "Edit": include_once("parts/accounts_edit.php");     break;
+                case "New":  include_once("parts/accounts_edit.php");     break;
+                case "Save": include_once("parts/accounts_save.php");     break;
+                default: echo "<p>Nothing to display.</p>"; break;
+            }; break;
         default: echo "<p>Nothing to display.</p>"; break;
     }
 
