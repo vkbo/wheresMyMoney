@@ -11,6 +11,7 @@
 
     $showYear  = $theOpt->getValue("ShowYear",date("Y",time()));
     $showYear  = htmGet("Year",1,false,$showYear);
+    $ratesDate = $showYear == date("Y",time()) ? time() : strtotime($showYear."-01-01");
     $theOpt->setValue("ShowYear",$showYear);
 
     $thisFile  = "funds.php";
@@ -23,7 +24,7 @@
 
     $theCurrs  = new Currency($oDB);
     $aCurrs    = $theCurrs->getData();
-    $aRates    = $theCurrs->getXRates(time(),$convertTo);
+    $aRates    = $theCurrs->getXRates($ratesDate,$convertTo);
 
     // Start Two Column Content
     echo "<div class='content-wrapper'>\n";
@@ -73,7 +74,7 @@
             if(array_key_exists($aRow["CurrencyISO"], $aRates["Data"])) {
                 $xRate   = $aRates["Data"][$aRow["CurrencyISO"]]["Rate"];
                 $xFactor = $aRates["Data"][$aRow["CurrencyISO"]]["Factor"];
-                $xAmount = $aRow["Balance"]*$xFactor/$xRate;
+                $xAmount = $aRow["Balance"]*($xRate == 0 ? 0 : $xFactor/$xRate);
             } else {
                 $xAmount = 0.0;
             }

@@ -25,6 +25,8 @@
 
     $theTrans  = new Transact($oDB);
     $theTrans->setFilter("FundsID",$fundsID);
+    $theTrans->setFilter("FromDate",strtotime($showYear."-01-01"));
+    $theTrans->setFilter("ToDate",strtotime($showYear."-12-31"));
     $theTrans->setFilter("PageSize",$pageSize);
     $theTrans->setFilter("PageNum",$pageNum);
     $aTrans    = $theTrans->getData(0,$doPages);
@@ -32,7 +34,7 @@
 
     $nPages    = ceil($nTrans/$pageSize);
 
-    echo "<h2>".$aDetails["FundsName"]."</h2>\n";
+    echo "<h2>".$aDetails["FundsName"]." for ".$showYear."</h2>\n";
     echo "<table class='display-table'>\n";
     if(!is_null($aDetails["BankName"])) {
         echo "<tr>";
@@ -119,7 +121,11 @@
         echo "</tr>";
         $oddEven++;
     }
-    echo "<tr class='list-stats'><td colspan=".$nCols.">Query: ".number_format($aTrans["Meta"]["Time"],2)." ms</td></tr>";
+    echo "<tr class='list-stats'>";
+        echo "<td colspan=".$nCols.">";
+            echoTiming($aTrans["Meta"]["Time"]);
+        echo "</td>";
+    echo "</tr>\n";
     echo "</table>\n";
 
     if($doPages && $nTrans > 0) {

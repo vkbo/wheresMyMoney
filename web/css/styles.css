@@ -366,6 +366,10 @@ a:hover {color: #009900; text-decoration: underline;}
 .odd    {background-color: #e7e7e7;}
 .g-even {background-color: #e7f7e7;}
 .g-odd  {background-color: #d7e7d7;}
+.r-even {background-color: #f7e7e7;}
+.r-odd  {background-color: #e7d7d7;}
+.o-even {background-color: #f7f0d7;}
+.o-odd  {background-color: #e7e0c7;}
 
 /**
  *  Print Styles

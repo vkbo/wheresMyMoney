@@ -70,8 +70,14 @@
 
             if(is_null($this->fundsID)) return false;
 
-            $SQL   = "SELECT COUNT(ID) AS Records FROM transactions ";
-            $SQL  .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int");
+            $SQL  = "SELECT COUNT(ID) AS Records FROM transactions ";
+            $SQL .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int")." ";
+            if(!is_null($this->fromDate)) {
+                $SQL .= "AND RecordDate >= '".date("Y-m-d",$this->fromDate)."' ";
+            }
+            if(!is_null($this->toDate)) {
+                $SQL .= "AND RecordDate <= '".date("Y-m-d",$this->toDate)."' ";
+            }
             $oData = $this->db->query($SQL);
             $aRow  = $oData->fetch_assoc();
 
@@ -223,10 +229,12 @@
                     $SQL .= "WHERE ID = "       .$this->dbWrap($aRow["ID"],"int")." ";
                     $SQL .= "AND FundsID = "    .$this->dbWrap($this->fundsID,"int").";\n";
                     if(array_key_exists("BlockHeight", $aRow) || array_key_exists("TransactionHash", $aRow)) {
-                        $SQL .= "UPDATE crypto_meta SET ";
-                        $SQL .= "Height = "             .$this->dbWrap($aRow["BlockHeight"],"int").", ";
-                        $SQL .= "Hash = "               .$this->dbWrap($aRow["TransactionHash"],"text")." ";
-                        $SQL .= "WHERE TransactionID = ".$this->dbWrap($aRow["ID"],"int").";\n";
+                        if(!is_null($aRow["BlockHeight"]) || !is_null($aRow["TransactionHash"])) {
+                            $SQL .= "UPDATE crypto_meta SET ";
+                            $SQL .= "Height = "             .$this->dbWrap($aRow["BlockHeight"],"int").", ";
+                            $SQL .= "Hash = "               .$this->dbWrap($aRow["TransactionHash"],"text")." ";
+                            $SQL .= "WHERE TransactionID = ".$this->dbWrap($aRow["ID"],"int").";\n";
+                        }
                     }
                 } else {
                     $SQL .= "INSERT INTO transactions (";
@@ -248,15 +256,17 @@
                     $SQL .= $this->dbWrap($aRow["Amount"],"int").", ";
                     $SQL .= $this->dbWrap(time(),"datetime").");\n";
                     if(array_key_exists("BlockHeight", $aRow) || array_key_exists("TransactionHash", $aRow)) {
-                        $SQL .= "SELECT LAST_INSERT_ID() INTO @TransactionID;\n";
-                        $SQL .= "INSERT INTO crypto_meta (";
-                        $SQL .= "TransactionID, ";
-                        $SQL .= "Height, ";
-                        $SQL .= "Hash ";
-                        $SQL .= ") VALUES (";
-                        $SQL .= "@TransactionID, ";
-                        $SQL .= $this->dbWrap($aRow["BlockHeight"],"int").", ";
-                        $SQL .= $this->dbWrap($aRow["TransactionHash"],"text").");\n";
+                        if(!is_null($aRow["BlockHeight"]) || !is_null($aRow["TransactionHash"])) {
+                            $SQL .= "SELECT LAST_INSERT_ID() INTO @TransactionID;\n";
+                            $SQL .= "INSERT INTO crypto_meta (";
+                            $SQL .= "TransactionID, ";
+                            $SQL .= "Height, ";
+                            $SQL .= "Hash ";
+                            $SQL .= ") VALUES (";
+                            $SQL .= "@TransactionID, ";
+                            $SQL .= $this->dbWrap($aRow["BlockHeight"],"int").", ";
+                            $SQL .= $this->dbWrap($aRow["TransactionHash"],"text").");\n";
+                        }
                     }
                 }
             }
@@ -356,6 +366,130 @@
             $aReturn["Meta"]["Time"] = $toc-$tic;
 
             return $aReturn;
+        }
+
+        public function getYearlyStatus($getYear="") {
+
+            $tic = microtime(true);
+
+            $aReturn = array(
+                "Meta" => array(
+                    "Content" => "YearlyStatus",
+                    "Count"   => 0,
+                ),
+                "Data" => array(),
+            );
+
+            if($getYear == "") {
+                $SQL  = "SELECT ";
+                $SQL .= "YEAR(t.RecordDate) AS Year, ";
+                $SQL .= "COUNT(DISTINCT FundsID) AS Funds, ";
+                $SQL .= "ty.Count AS Count, ";
+                $SQL .= "ty.Locked AS Locked ";
+                $SQL .= "FROM transactions AS t ";
+                $SQL .= "LEFT JOIN (";
+                $SQL .=     "SELECT ";
+                $SQL .=     "RecordDate, ";
+                $SQL .=     "COUNT(ID) AS Count, ";
+                $SQL .=     "SUM(Locked IS NOT NULL) AS Locked ";
+                $SQL .=     "FROM transactions_yearly";
+                $SQL .= ") AS ty ON YEAR(ty.RecordDate) = YEAR(t.RecordDate) ";
+                $SQL .= "GROUP BY Year";
+            } else {
+                $SQL  = "SELECT ";
+                $SQL .= "YEAR(t.RecordDate) AS Year, ";
+                $SQL .= "f.Name AS FundsName, ";
+                $SQL .= "f.ID AS ID, ";
+                $SQL .= "COUNT(f.ID) AS Count, ";
+                $SQL .= "c.ISO AS Currency, ";
+                $SQL .= "c.Factor AS Factor, ";
+                $SQL .= "SUM(t.Amount) AS Balance, ";
+                $SQL .= "ty.Amount AS Summed, ";
+                $SQL .= "ty.Locked IS NOT NULL AS Locked ";
+                $SQL .= "FROM transactions AS t ";
+                $SQL .= "LEFT JOIN transactions_yearly AS ty ";
+                $SQL .=     "ON YEAR(ty.RecordDate) = YEAR(t.RecordDate) ";
+                $SQL .=     "AND ty.FundsID = t.FundsID ";
+                $SQL .= "LEFT JOIN funds AS f ON f.ID = t.FundsID ";
+                $SQL .= "LEFT JOIN currency AS c ON c.ID = f.CurrencyID ";
+                $SQL .= "WHERE YEAR(t.RecordDate) = ".$this->dbWrap($getYear,"int")." ";
+                $SQL .= "GROUP BY t.FundsID ";
+                $SQL .= "ORDER BY FIELD(f.Type,'B','C','X'), f.BankID ASC, FIELD(f.Category,'P','S','C'), f.ID ASC ";
+            }
+            $oData = $this->db->query($SQL);
+
+            if(!$oData) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            }
+
+            while($aRow = $oData->fetch_assoc()) {
+                if($getYear == "") {
+                    $aReturn["Data"][] = array(
+                        "Year"   => $aRow["Year"],
+                        "Funds"  => $aRow["Funds"],
+                        "Count"  => $aRow["Count"],
+                        "Locked" => $aRow["Locked"],
+                    );
+                } else {
+                    $aReturn["Data"][] = array(
+                        "ID"        => $aRow["ID"],
+                        "Year"      => $aRow["Year"],
+                        "FundsName" => $aRow["FundsName"],
+                        "Count"     => $aRow["Count"],
+                        "Currency"  => $aRow["Currency"],
+                        "Factor"    => $aRow["Factor"],
+                        "Balance"   => $aRow["Balance"],
+                        "Summed"    => $aRow["Summed"],
+                        "Locked"    => $aRow["Locked"],
+                    );
+                }
+            }
+            $aReturn["Meta"]["Count"] = count($aReturn["Data"]);
+
+            $toc = microtime(true);
+            $aReturn["Meta"]["Time"] = $toc-$tic;
+
+            return $aReturn;
+        }
+
+        public function calcYear($doYear, $fundsID) {
+
+            if($doYear == "" || $fundsID == 0) return false;
+
+            $SQL  = "SELECT ";
+            $SQL .= "SUM(Amount) INTO @TransactionsSum ";
+            $SQL .= "FROM transactions ";
+            $SQL .= "WHERE FundsID = ".$this->dbWrap($fundsID,"int")." ";
+            $SQL .= "AND YEAR(RecordDate) = ".$this->dbWrap($doYear,"text").";\n";
+            $SQL .= "INSERT INTO transactions_yearly (";
+            $SQL .= "FundsID, RecordDate, Amount, Updated";
+            $SQL .= ") VALUES (";
+            $SQL .= $this->dbWrap($fundsID,"int").", ";
+            $SQL .= $this->dbWrap($doYear."-12-31","text").", ";
+            $SQL .= "@TransactionsSum, ";
+            $SQL .= $this->dbWrap(time(),"datetime").") ";
+            $SQL .= "ON DUPLICATE KEY UPDATE ";
+            $SQL .= "Amount = VALUES(Amount), ";
+            $SQL .= "Updated = VALUES(Updated);\n";
+            echo "The Query was:<br />";
+            echo str_replace("\n","<br />",$SQL);
+
+            $oRes = $this->db->multi_query($SQL);
+            while($this->db->more_results()) $this->db->next_result();
+
+            if(!$oRes) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 ?>
