@@ -27,6 +27,13 @@
             "S" => "Savings",
             "C" => "Credit",
         ),
+        "AccTypes" = array(
+            "A" => "Assets",
+            "L" => "Liabilities",
+            "I" => "Income",
+            "E" => "Expenses",
+            "N" => "Contra",
+        )
     );
 
     // Report User Agent as
