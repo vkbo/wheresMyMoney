@@ -9,13 +9,14 @@
     $pageNum   = htmGet("Page",0,false,1);
     $fromDate  = htmGet("FromDate",1,false,"");
     $thisPage  = "funds.php?Part=Trans&FundsID=".$fundsID;
+    $showYear  = $theOpt->getValue("ShowYear");
 
     $theFunds  = new Funds($oDB);
+    $theFunds->setFilter("Year",$showYear);
     $aFunds    = $theFunds->getData($fundsID);
-    $aDetails  = $aFunds["Data"][0];
-    $fundsFac  = $aDetails["Factor"];
-    $isoCurr   = $aDetails["CurrencyISO"];
-    $fundsType = $aDetails["Type"];
+    $fundsFac  = $aFunds["Data"][0]["Factor"];
+    $isoCurr   = $aFunds["Data"][0]["CurrencyISO"];
+    $fundsType = $aFunds["Data"][0]["Type"];
 
     $theCurrs  = new Currency($oDB);
     $theTrans  = new Transact($oDB);
@@ -47,7 +48,7 @@
         $aData["Original"] = null;
     }
 
-    $theTrans->saveData(array(0=>$aData));
+    $bOK = $theTrans->saveData(array(0=>$aData));
 
-    header("Location: ".$thisPage);
+    if($bOK) header("Location: ".$thisPage);
 ?>

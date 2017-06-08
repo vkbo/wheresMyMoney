@@ -8,15 +8,18 @@
     $updateID  = htmGet("ID",0,false,"");
     $thisPage  = "funds.php?Part=Funds";
 
+    $showYear  = $theOpt->getValue("ShowYear");
+
     $theFunds  = new Funds($oDB);
+    $theFunds->setFilter("Year",$showYear);
     $theCurrs  = new Currency($oDB);
     $aCurrs    = $theCurrs->getData();
     $theBanks  = new Bank($oDB);
     $aBanks    = $theBanks->getData();
 
-    echo "<h2>".$aDetails["FundsName"]."</h2>\n";
 
     if($doAction == "New") {
+        echo "<h2>Funds and Bank Accounts</h2>\n";
         echo "<h3>Adding Funds</h3>\n";
         $frmName          = "";
         $frmAccountNumber = "";
@@ -28,8 +31,10 @@
         $frmOpened        = date($cDateS,time());
         $frmClosed        = "";
     } else {
+        $aFunds = $theFunds->getData($updateID);
+        echo "<h2>".$aFunds["Data"][0]["FundsName"]."</h2>\n";
         echo "<h3>Editing Entry</h3>\n";
-        $aFunds           = $theFunds->getData($updateID);
+
         $frmUpdateID      = $aFunds["Data"][0]["ID"];
         $frmName          = $aFunds["Data"][0]["FundsName"];
         $frmAccountNumber = $aFunds["Data"][0]["AccountNumber"];
@@ -81,7 +86,7 @@
     echo "<tr>";
         echo "<th>Bank</th>";
         echo "<td>";
-            echo "<select name='CurrencyID'>";
+            echo "<select name='BankID'>";
                 echo "<option value=''>&nbsp;</option>";
                 foreach($aBanks["Data"] as $aRow) {
                     echo "<option value='".$aRow["ID"]."'".($frmBankID==$aRow["ID"]?" selected":"").">".$aRow["Name"]."</option>";

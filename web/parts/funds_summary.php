@@ -5,21 +5,25 @@
     *  Created 2017-05-31
     */
 
-    $convertTo = $theOpt->getValue("BaseCurrency");
+    $convertTo = $theOpt->getValue("BaseCurrency","EUR");
     $convertTo = htmGet("ConvertTo",1,false,$convertTo);
+    $theOpt->setValue("BaseCurrency",$convertTo);
+
+    $showYear  = $theOpt->getValue("ShowYear",date("Y",time()));
+    $showYear  = htmGet("Year",1,false,$showYear);
+    $theOpt->setValue("ShowYear",$showYear);
+
     $thisFile  = "funds.php";
     $thisPage  = "funds.php?Part=Summary";
 
     $theFunds  = new Funds($oDB);
+    $theFunds->setFilter("Year",$showYear);
     $aFunds    = $theFunds->getData();
+    $aYears    = $theFunds->getYears();
 
     $theCurrs  = new Currency($oDB);
     $aCurrs    = $theCurrs->getData();
-
-    if($convertTo != "") {
-        $theOpt->setValue("BaseCurrency",$convertTo);
-        $aRates = $theCurrs->getXRates(time(),$convertTo);
-    }
+    $aRates    = $theCurrs->getXRates(time(),$convertTo);
 
     // Start Two Column Content
     echo "<div class='content-wrapper'>\n";
@@ -27,8 +31,11 @@
     // ========================
 
     echo "<div>";
-        echo "<b>Actions:</b>&nbsp;";
-        echo "<a href='".$thisFile."?Part=Funds&Action=New'>Add New</a>";
+        echo "<b>Year:</b>&nbsp;";
+        foreach($aYears as $selYear) {
+            echo "<a href='".$thisPage."&Year=".$selYear."'>".$selYear."</a>";
+            if($selYear !== end($aYears)) echo "&nbsp;|&nbsp;";
+        }
     echo "</div><br />\n";
 
     $prevTitle = "";

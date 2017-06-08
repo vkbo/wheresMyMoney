@@ -12,10 +12,10 @@
     $sView    = htmGet("Part",1,false,"Summary");
     $doAction = htmGet("Action",1,false,"List");
     $aParts   = array(
-        "Summary" => array("Title"=>"Funds Summary","Menu"=>"Summary","URL"=>"funds.php?Part=Summary"),
-        "Banks"   => array("Title"=>"Manage Banks", "Menu"=>"Banks",  "URL"=>"funds.php?Part=Banks"),
-        "Trans"   => array("Title"=>"Transactions", "Menu"=>"",       "URL"=>""),
-        "Funds"   => array("Title"=>"Funds",        "Menu"=>"",       "URL"=>""),
+        "Summary" => array("Title"=>"Funds Summary","Menu"=>"Summary",  "URL"=>"funds.php?Part=Summary"),
+        "Banks"   => array("Title"=>"Manage Banks", "Menu"=>"Banks",    "URL"=>"funds.php?Part=Banks"),
+        "Trans"   => array("Title"=>"Transactions", "Menu"=>"",         "URL"=>""),
+        "Funds"   => array("Title"=>"Add Funds",    "Menu"=>"Add Funds","URL"=>"funds.php?Part=Funds&Action=New"),
     );
 
    /**

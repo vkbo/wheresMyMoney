@@ -7,6 +7,7 @@
 
     include_once("import/import_functions.php");
     include_once("import/import_bank_1.php");
+    include_once("import/import_spreadsheet_1.php");
 
     function importBank($scriptType, $fundsID, $rawData) {
 
@@ -24,9 +25,12 @@
         );
         $aImport = call_user_func("importParseBank_".$scriptType, $rawData);
 
+        $aReturn["Data"]            = $aImport["Data"];
+        $aReturn["Meta"]["DateMin"] = $aImport["Meta"]["DateMin"];
+        $aReturn["Meta"]["DateMax"] = $aImport["Meta"]["DateMax"];
+
         $toc = microtime(true);
-        $aReturn["Data"]         = $aImport["Data"];
-        $aReturn["Meta"]["Time"] = ($toc-$tic)*1000;
+        $aReturn["Meta"]["Time"]    = ($toc-$tic)*1000;
 
         return $aReturn;
     }

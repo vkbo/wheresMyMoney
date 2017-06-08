@@ -1,11 +1,11 @@
 <?php
    /**
-    *  Where's My Money? – Import Function No 1
-    * ==========================================
-    *  Created 2017-06-01
+    *  Where's My Money? – Import Function Spreadsheet 1
+    * ===================================================
+    *  Created 2017-06-08 :: Copied from import_bank_1.php
     */
 
-    function importParseBank_NO_Sparebank1_CSV($rawData) {
+    function importParseBank_NO_Spreadsheet_4Col($rawData) {
 
         $aReturn = array(
             "Meta" => array(
@@ -20,11 +20,8 @@
         $dateMin = null;
         $dateMax = null;
 
-        // Replace all semi colons with tabs so it works for both formats
         $rawData = str_replace("\r","",$rawData);
-        $rawData = str_replace(";","\t",$rawData);
-
-        $aLines = explode("\n",$rawData);
+        $aLines  = explode("\n",$rawData);
         foreach($aLines as $sLine) {
 
             $aBits = explode("\t",$sLine);

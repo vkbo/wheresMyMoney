@@ -293,7 +293,7 @@ a:hover {color: #009900; text-decoration: underline;}
 }
 
 .text-raw {
-    width: 640px;
+    width: 100%;
     height: 40em;
     resize: none;
 }

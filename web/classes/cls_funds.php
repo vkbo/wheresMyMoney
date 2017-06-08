@@ -17,6 +17,34 @@
         }
 
         // Methods
+        public function setFilter($filterType, $filterValue) {
+            switch($filterType) {
+            case "Year":
+                $this->year = intval($filterValue);
+                break;
+            default:
+                echo "Unknown filter type ...<br />";
+                break;
+            }
+        }
+
+        public function unsetFilter($filterType) {
+            switch($filterType) {
+            case "Year":
+                $this->year = date("Y",time());
+                break;
+            default:
+                echo "Unknown filter type ...<br />";
+                break;
+            }
+        }
+
+       /**
+        *  Get data from funds table
+        * ===========================
+        *  - Pulls a single record if ID is specified, otherwise pulls all
+        */
+
         public function getData($ID=0) {
 
             $tic = microtime(true);
@@ -123,8 +151,8 @@
                     $SQL .= "Type = "         .$this->dbWrap($aRow["Type"],"text").", ";
                     $SQL .= "Category = "     .$this->dbWrap($aRow["Category"],"text").", ";
                     $SQL .= "BankID = "       .$this->dbWrap($aRow["BankID"],"int").", ";
-                    $SQL .= "CurrencyID = "   .$this->dbWrap($aRow["CurrencyID"],"int")." ";
-                    $SQL .= "Opened = "       .$this->dbWrap($aRow["Opened"],"date")." ";
+                    $SQL .= "CurrencyID = "   .$this->dbWrap($aRow["CurrencyID"],"int").", ";
+                    $SQL .= "Opened = "       .$this->dbWrap($aRow["Opened"],"date").", ";
                     $SQL .= "Closed = "       .$this->dbWrap($aRow["Closed"],"date")." ";
                     $SQL .= "WHERE ID = "     .$this->dbWrap($aRow["ID"],"int").";\n";
                 } else {
@@ -164,6 +192,33 @@
             } else {
                 return true;
             }
+        }
+
+       /**
+        *  Return a list of all years in transaction table
+        * =================================================
+        */
+
+        public function getYears() {
+
+            $SQL   = "SELECT DISTINCT YEAR(RecordDate) AS Year FROM transactions";
+            $oData = $this->db->query($SQL);
+
+            if(!$oData) {
+                echo "MySQL Query Failed ...<br />";
+                echo "Error: ".$this->db->error."<br />";
+                echo "The Query was:<br />";
+                echo str_replace("\n","<br />",$SQL);
+                return false;
+            }
+
+            $aReturn = array();
+            $aRows   = $oData->fetch_all();;
+            foreach($aRows as $aRow) {
+                $aReturn[] = $aRow[0];
+            }
+
+            return $aReturn;
         }
     }
 ?>

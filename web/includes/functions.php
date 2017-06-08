@@ -117,6 +117,7 @@
         $sValue = str_replace("\r", "", $sValue);
         $sValue = str_replace("\n", " ", $sValue);
         $sValue = str_replace("\t", " ", $sValue);
+        $sValue = str_replace("\"", " ", $sValue);
         $sValue = str_replace("  ", " ", $sValue);
         $sValue = str_replace("  ", " ", $sValue);
         return trim($sValue);
@@ -128,6 +129,7 @@
             $sValue = substr_replace($sValue, ".", $iComma, 1);
         }
         $sValue = str_replace(" ", "", $sValue);
+        $sValue = str_replace(" ", "", $sValue);
         $sValue = str_replace(",", "", $sValue);
         $sValue = str_replace("'", "", $sValue);
         return round(floatval($sValue)*$iFactor);

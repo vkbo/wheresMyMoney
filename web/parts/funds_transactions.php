@@ -8,11 +8,15 @@
     $fundsID   = htmGet("FundsID",0,false,0);
     $pageNum   = htmGet("Page",0,false,1);
     $fromDate  = htmGet("FromDate",1,false,"");
+
     $thisPage  = "funds.php?Part=Trans&FundsID=".$fundsID;
+
+    $showYear  = $theOpt->getValue("ShowYear");
     $doPages   = $fromDate == "";
     $pageSize  = 50;
 
     $theFunds  = new Funds($oDB);
+    $theFunds->setFilter("Year",$showYear);
     $aFunds    = $theFunds->getData($fundsID);
     $aDetails  = $aFunds["Data"][0];
     $fundsFac  = $aDetails["Factor"];

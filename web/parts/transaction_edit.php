@@ -8,13 +8,14 @@
     $fundsID   = htmGet("FundsID",0,false,0);
     $updateID  = htmGet("ID",0,false,"");
     $thisPage  = "funds.php?Part=Trans&FundsID=".$fundsID;
+    $showYear  = $theOpt->getValue("ShowYear");
 
     $theFunds  = new Funds($oDB);
+    $theFunds->setFilter("Year",$showYear);
     $aFunds    = $theFunds->getData($fundsID);
-    $aDetails  = $aFunds["Data"][0];
-    $fundsFac  = $aDetails["Factor"];
-    $isoCurr   = $aDetails["CurrencyISO"];
-    $fundsType = $aDetails["Type"];
+    $fundsFac  = $aFunds["Data"][0]["Factor"];
+    $isoCurr   = $aFunds["Data"][0]["CurrencyISO"];
+    $fundsType = $aFunds["Data"][0]["Type"];
 
     $theTrans  = new Transact($oDB);
     $theTrans->setFilter("FundsID",$fundsID);
@@ -23,7 +24,7 @@
     $theCurrs  = new Currency($oDB);
     $aCurrs    = $theCurrs->getData();
 
-    echo "<h2>".$aDetails["FundsName"]."</h2>\n";
+    echo "<h2>".$aFunds["Data"][0]["FundsName"]."</h2>\n";
 
     if($doAction == "New") {
         echo "<h3>Adding Entry</h3>\n";

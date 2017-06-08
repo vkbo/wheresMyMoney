@@ -26,10 +26,12 @@
     $aData["Category"]      = $frmCategory == "" ? null : $frmCategory;
     $aData["BankID"]        = $frmBankID == "" ? null : intval($frmBankID);
     $aData["CurrencyID"]    = $frmCurrencyID == "" ? null : intval($frmCurrencyID);
-    $aData["Opened"]        = $frmOpened == "" ? time() : strtotime($frmOpened);
-    $aData["Closed"]        = $frmClosed == "" ? time() : strtotime($frmClosed);
+    $aData["Opened"]        = $frmOpened == "" ? null : strtotime($frmOpened);
+    $aData["Closed"]        = $frmClosed == "" ? null : strtotime($frmClosed);
 
-    $theFunds->saveData(array(0=>$aData));
+    print_r($aData);
 
-    header("Location: funds.php?Part=Summary");
+    $bOK = $theFunds->saveData(array(0=>$aData));
+
+    if($bOK) header("Location: funds.php?Part=Summary");
 ?>

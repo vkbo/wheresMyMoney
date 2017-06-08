@@ -285,17 +285,17 @@
 
         public function deleteData($aIDs) {
 
-            if(is_null($this->fundsID)) return false;
+            if(is_null($this->fundsID)) return false; // Safety requirement
+            if(count($aIDs) == 0) return true;        // Nothing to delete
 
             $SQL = "";
             foreach($aIDs as $iID) {
-
                 if(!$iID > 0) continue;
-
                 $SQL .= "DELETE FROM transactions ";
                 $SQL .= "WHERE FundsID = ".$this->dbWrap($this->fundsID,"int")." ";
                 $SQL .= "AND ID = ".$this->dbWrap($iID,"int").";\n";
             }
+
             $oRes = $this->db->multi_query($SQL);
             while($this->db->more_results()) $this->db->next_result();
 
