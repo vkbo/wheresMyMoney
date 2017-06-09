@@ -37,11 +37,10 @@
         $sCol = $nToDo < 50 ? "msg-warn" : "msg-err";
         echo "<div class='".$sCol."'>";
             echo $nToDo." transactions need accounting.";
-        echo "</div>";
-        echo "<div class='msg-time'>";
-            echoTiming($aToDo["Meta"]["Time"]);
-        echo "</div><br />\n";
+        echo "</div><br />";
     }
+
+    echo "<h2>Funds ".$showYear."</h2>";
 
     echo "<div>";
         echo "<b>Year:</b>&nbsp;";
@@ -101,7 +100,9 @@
     }
     echo "<tr class='list-stats'>";
         echo "<td colspan=8>";
-            echoTiming($aFunds["Meta"]["Time"]);
+            echoTiming($aFunds["Meta"]["Time"],"Funds Query");
+            echo "<br />";
+            echoTiming($aToDo["Meta"]["Time"],"Accounting Query");
         echo "</td>";
     echo "</tr>\n";
     echo "</table>\n";

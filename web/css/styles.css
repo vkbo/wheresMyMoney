@@ -221,7 +221,7 @@ a:hover {color: #009900; text-decoration: underline;}
 /* List Table */
 
 .list-table {
-    margin-bottom: 1em;
+    margin: 0 0 1em 0;
 }
 
 .list-table td {
