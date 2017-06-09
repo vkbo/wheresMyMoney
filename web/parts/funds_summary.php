@@ -32,6 +32,17 @@
     echo "<div class='content-main'>\n";
     // ========================
 
+    $nToDo = $aToDo["Data"]["ToDo"];
+    if($nToDo > 0) {
+        $sCol = $nToDo < 50 ? "msg-warn" : "msg-err";
+        echo "<div class='".$sCol."'>";
+            echo $nToDo." transactions need accounting.";
+        echo "</div>";
+        echo "<div class='msg-time'>";
+            echoTiming($aToDo["Meta"]["Time"]);
+        echo "</div><br />\n";
+    }
+
     echo "<div>";
         echo "<b>Year:</b>&nbsp;";
         foreach($aYears as $selYear) {
@@ -43,20 +54,6 @@
                 echo "<a href='funds.php?Part=Funds&Action=New'>Add Funds</a>";
             echo "&nbsp;]";
         echo "</div>";
-    echo "</div><br />\n";
-
-    $nToDo = $aToDo["Data"]["ToDo"];
-    if($nToDo == 0) {
-        $sCol = "msg-ok";
-    } elseif($nToDo > 0 && $nToDo < 50) {
-        $sCol = "msg-warn";
-    } else {
-        $sCol = "msg-err";
-    }
-    echo "<div class='".$sCol."'>";
-        echo $nToDo." transactions need accounting. [";
-        echoTiming($aToDo["Meta"]["Time"]);
-        echo "]";
     echo "</div><br />\n";
 
     $prevTitle = "";

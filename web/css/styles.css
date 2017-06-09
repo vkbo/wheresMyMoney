@@ -372,28 +372,37 @@ a:hover {color: #009900; text-decoration: underline;}
 .o-even {background-color: #f7f0d7;}
 .o-odd  {background-color: #e7e0c7;}
 
+.msg-ok,
+.msg-warn,
+.msg-err {
+    padding: 8px;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
 .msg-ok {
     background-color: #e7f7e7;
     color: #008800;
     border: 1px solid #008800;
-    padding: 8px;
-    display: block;
 }
 
 .msg-warn {
     background-color: #f7f0d7;
     color: #aa6600;
     border: 1px solid #aa6600;
-    padding: 8px;
-    display: block;
 }
 
 .msg-err {
     background-color: #f7e7e7;
     color: #880000;
     border: 1px solid #880000;
-    padding: 8px;
-    display: block;
+}
+
+.msg-time {
+    text-align: right;
+    font-size: 0.8em;
+    color: #777777;
 }
 
 /**
