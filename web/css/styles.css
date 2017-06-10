@@ -251,7 +251,6 @@ a:hover {color: #009900; text-decoration: underline;}
 
 .list-head .tbl-clear,
 .list-table .tbl-clear {
-    width: 1.5em;
     background-color: #ffffff;
     border: 0;
 }

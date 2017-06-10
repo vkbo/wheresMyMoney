@@ -16,6 +16,7 @@
         "Banks"   => array("Title"=>"Manage Banks", "Menu"=>"Banks",    "URL"=>"funds.php?Part=Banks"),
         "Trans"   => array("Title"=>"Transactions", "Menu"=>"",         "URL"=>""),
         "Funds"   => array("Title"=>"Add Funds",    "Menu"=>"",         "URL"=>""),
+        "Account" => array("Title"=>"Accounting",   "Menu"=>"",         "URL"=>""),
     );
 
    /**

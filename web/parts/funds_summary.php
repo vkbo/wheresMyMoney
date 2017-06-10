@@ -51,6 +51,10 @@
         echo "<div class='floatr'>";
             echo "[&nbsp;";
                 echo "<a href='funds.php?Part=Funds&Action=New'>Add Funds</a>";
+                if($nToDo > 0) {
+                    echo "&nbsp;|&nbsp;";
+                    echo "<a href='funds.php?Part=Account'>Accounting</a>";
+                }
             echo "&nbsp;]";
         echo "</div>";
     echo "</div><br />\n";
@@ -85,7 +89,7 @@
             echo "<td>".$cTypes["FundsCat"][$aRow["Category"]]."</td>";
             echo "<td class='mono'>".$aRow["CurrencyISO"]."</td>";
             echo "<td class='mono right'>".rdblAmount($aRow["Balance"],$aRow["Factor"],0,4)."</td>";
-            echo "<td class='tbl-clear'>&nbsp;&nbsp;</td>";
+            echo "<td class='tbl-clear expand'>&nbsp;&nbsp;</td>";
             echo "<td class='mono'>".$convertTo."</td>";
             if(array_key_exists($aRow["CurrencyISO"], $aRates["Data"])) {
                 $xRate   = $aRates["Data"][$aRow["CurrencyISO"]]["Rate"];
@@ -120,7 +124,7 @@
         echo "<div><a href='".$thisPage."&ConvertTo=".$aCurr["ISO"]."'>".$aCurr["ISO"]." - ".$aCurr["Name"]."</a></div>";
     }
     echo "<br />\n";
-    echo "<h5>Rates</h5>\n";
+    echo "<h5>Rates to ".$convertTo."</h5>\n";
     echo "<table class='list-table'>\n";
     echo "<tr class='list-head'>";
         echo "<td>ISO</td>";
@@ -128,6 +132,7 @@
         echo "<td>Date</td>";
     echo "</tr>\n";
     foreach($aRates["Data"] as $sISO=>$aRate) {
+        if($sISO == $convertTo) continue;
         echo "<tr>";
             if($aRate["Rate"] < 0.01) {
                 echo "<td class='mono right'>m".$sISO."</td>";

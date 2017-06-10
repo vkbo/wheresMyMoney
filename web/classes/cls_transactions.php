@@ -256,17 +256,15 @@
                     $SQL .= $this->dbWrap($aRow["Amount"],"int").", ";
                     $SQL .= $this->dbWrap(time(),"datetime").");\n";
                     if(array_key_exists("BlockHeight", $aRow) || array_key_exists("TransactionHash", $aRow)) {
-                        if(!is_null($aRow["BlockHeight"]) || !is_null($aRow["TransactionHash"])) {
-                            $SQL .= "SELECT LAST_INSERT_ID() INTO @TransactionID;\n";
-                            $SQL .= "INSERT INTO crypto_meta (";
-                            $SQL .= "TransactionID, ";
-                            $SQL .= "Height, ";
-                            $SQL .= "Hash ";
-                            $SQL .= ") VALUES (";
-                            $SQL .= "@TransactionID, ";
-                            $SQL .= $this->dbWrap($aRow["BlockHeight"],"int").", ";
-                            $SQL .= $this->dbWrap($aRow["TransactionHash"],"text").");\n";
-                        }
+                        $SQL .= "SELECT LAST_INSERT_ID() INTO @TransactionID;\n";
+                        $SQL .= "INSERT INTO crypto_meta (";
+                        $SQL .= "TransactionID, ";
+                        $SQL .= "Height, ";
+                        $SQL .= "Hash ";
+                        $SQL .= ") VALUES (";
+                        $SQL .= "@TransactionID, ";
+                        $SQL .= $this->dbWrap($aRow["BlockHeight"],"int").", ";
+                        $SQL .= $this->dbWrap($aRow["TransactionHash"],"text").");\n";
                     }
                 }
             }

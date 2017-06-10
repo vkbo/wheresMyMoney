@@ -147,7 +147,7 @@
 
             if($xBase == "EUR") {
                 $baseRate = 1.0;
-                $baseDate = strtotime(date("Y-m-d",time()));
+                $baseDate = null;
                 $baseFac  = 100;
             } elseif(array_key_exists($xBase, $aFiat["Data"])) {
                 $baseRate = $aFiat["Data"][$xBase]["Rate"];
@@ -172,6 +172,10 @@
                 $aReturn["Data"][$sISO]["Rate"]     = $baseRate == 0 ? 0 : $aRate["Rate"]/$baseRate;
                 $aReturn["Data"][$sISO]["RateDate"] = $aRate["RateDate"];
                 $aReturn["Data"][$sISO]["Factor"]   = $baseFac/$aRate["Factor"];
+            }
+
+            if($xBase != "EUR" && array_key_exists("EUR", $aReturn["Data"])) {
+                $aReturn["Data"]["EUR"]["RateDate"] = $baseDate;
             }
 
             $aReturn["Meta"]["Count"]  = count($aReturn["Data"]);
@@ -256,7 +260,7 @@
                 if($sISO == "EUR") {
                     $aReturn["Data"][$sISO]["Date"]     = $dDate;
                     $aReturn["Data"][$sISO]["Rate"]     = 1.0;
-                    $aReturn["Data"][$sISO]["RateDate"] = $dDate;
+                    $aReturn["Data"][$sISO]["RateDate"] = null;
                     continue;
                 }
                 if($aRate["Date"] != $dDate) $bPull = true;
