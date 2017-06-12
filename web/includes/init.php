@@ -43,6 +43,7 @@
 
     // Include Classes
     require_once("classes/cls_database.php");
+    require_once("classes/cls_accounting.php");
     require_once("classes/cls_accounts.php");
     require_once("classes/cls_bank.php");
     require_once("classes/cls_currency.php");

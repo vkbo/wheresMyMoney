@@ -66,16 +66,20 @@
             $SQL .= "f.Category AS Category, ";
             $SQL .= "f.BankID AS BankID, ";
             $SQL .= "f.CurrencyID AS CurrencyID, ";
+            $SQL .= "f.AccountID AS AccountID, ";
             $SQL .= "f.Opened AS Opened, ";
             $SQL .= "f.Closed AS Closed, ";
             $SQL .= "b.Name AS BankName, ";
             $SQL .= "c.ISO AS CurrencyISO, ";
             $SQL .= "c.Factor AS Factor, ";
+            $SQL .= "ac.Code AS AccountCode, ";
+            $SQL .= "ac.Name AS AccountName, ";
             $SQL .= "t.Balance AS ThisYear, ";
             $SQL .= "ty.Balance AS StartOfYear ";
             $SQL .= "FROM funds AS f ";
             $SQL .= "LEFT JOIN bank AS b ON b.ID = f.BankID ";
             $SQL .= "LEFT JOIN currency AS c ON c.ID = f.CurrencyID ";
+            $SQL .= "LEFT JOIN accounts AS ac ON ac.ID = f.AccountID ";
             $SQL .= "LEFT JOIN (";
             $SQL .=     "SELECT ";
             $SQL .=     "FundsID, ";
@@ -118,6 +122,9 @@
                     "Category"      => $aRow["Category"],
                     "BankID"        => $aRow["BankID"],
                     "CurrencyID"    => $aRow["CurrencyID"],
+                    "AccountID"     => $aRow["AccountID"],
+                    "AccountCode"   => $aRow["AccountCode"],
+                    "AccountName"   => $aRow["AccountName"],
                     "Opened"        => strtotime($aRow["Opened"]),
                     "Closed"        => strtotime($aRow["Closed"]),
                     "BankName"      => $aRow["BankName"],
@@ -152,6 +159,7 @@
                     $SQL .= "Category = "     .$this->dbWrap($aRow["Category"],"text").", ";
                     $SQL .= "BankID = "       .$this->dbWrap($aRow["BankID"],"int").", ";
                     $SQL .= "CurrencyID = "   .$this->dbWrap($aRow["CurrencyID"],"int").", ";
+                    $SQL .= "AccountID = "    .$this->dbWrap($aRow["AccountID"],"int").", ";
                     $SQL .= "Opened = "       .$this->dbWrap($aRow["Opened"],"date").", ";
                     $SQL .= "Closed = "       .$this->dbWrap($aRow["Closed"],"date")." ";
                     $SQL .= "WHERE ID = "     .$this->dbWrap($aRow["ID"],"int").";\n";
@@ -164,6 +172,7 @@
                     $SQL .= "Category, ";
                     $SQL .= "BankID, ";
                     $SQL .= "CurrencyID, ";
+                    $SQL .= "AccountID, ";
                     $SQL .= "Opened, ";
                     $SQL .= "Closed ";
                     $SQL .= ") VALUES (";
@@ -174,6 +183,7 @@
                     $SQL .= $this->dbWrap($aRow["Category"],"text").", ";
                     $SQL .= $this->dbWrap($aRow["BankID"],"int").", ";
                     $SQL .= $this->dbWrap($aRow["CurrencyID"],"int").", ";
+                    $SQL .= $this->dbWrap($aRow["AccountID"],"int").", ";
                     $SQL .= $this->dbWrap($aRow["Opened"],"date").", ";
                     $SQL .= $this->dbWrap($aRow["Closed"],"date").");\n";
                 }
@@ -234,14 +244,8 @@
             );
 
             $SQL  = "SELECT ";
-            $SQL .= "SUM((t.Amount - IF(a.Total IS NULL, 0, a.Total)) <> 0) AS ToDo ";
+            $SQL .= "SUM(t.AccountingID IS NULL) AS ToDo ";
             $SQL .= "FROM transactions AS t ";
-            $SQL .= "LEFT JOIN (";
-            $SQL .=     "SELECT TransactionID, ";
-            $SQL .=     "COUNT(ID) AS Count, ";
-            $SQL .=     "SUM(Amount) AS Total ";
-            $SQL .=     "FROM accounting GROUP BY TransactionID";
-            $SQL .= ") AS a ON t.ID = a.TransactionID ";
             $SQL .= "WHERE t.Locked IS NULL ";
             $oData = $this->db->query($SQL);
 

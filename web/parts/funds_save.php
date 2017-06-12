@@ -15,6 +15,7 @@
     $frmCategory      = trim(htmPost("Category",""));
     $frmBankID        = trim(htmPost("BankID",""));
     $frmCurrencyID    = trim(htmPost("CurrencyID",""));
+    $frmAccountID     = trim(htmPost("AccountID",""));
     $frmOpened        = trim(htmPost("Opened",""));
     $frmClosed        = trim(htmPost("Closed",""));
 
@@ -26,6 +27,7 @@
     $aData["Category"]      = $frmCategory == "" ? null : $frmCategory;
     $aData["BankID"]        = $frmBankID == "" ? null : intval($frmBankID);
     $aData["CurrencyID"]    = $frmCurrencyID == "" ? null : intval($frmCurrencyID);
+    $aData["AccountID"]     = $frmAccountID == "" ? null : intval($frmAccountID);
     $aData["Opened"]        = $frmOpened == "" ? null : strtotime($frmOpened);
     $aData["Closed"]        = $frmClosed == "" ? null : strtotime($frmClosed);
 

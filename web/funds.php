@@ -32,10 +32,11 @@
         case "Banks":   include_once("parts/funds_bank.php");    break;
         case "Trans":
             switch($doAction) {
-                case "List": include_once("parts/funds_transactions.php"); break;
-                case "Edit": include_once("parts/transaction_edit.php");   break;
-                case "New":  include_once("parts/transaction_edit.php");   break;
-                case "Save": include_once("parts/transaction_save.php");   break;
+                case "List": include_once("parts/funds_transactions.php");     break;
+                case "Edit": include_once("parts/transaction_edit.php");       break;
+                case "New":  include_once("parts/transaction_edit.php");       break;
+                case "Save": include_once("parts/transaction_save.php");       break;
+                case "Acc":  include_once("parts/transaction_accounting.php"); break;
                 default: echo "<p>Nothing to display.</p>"; break;
             }; break;
         case "Funds":

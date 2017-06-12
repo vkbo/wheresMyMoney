@@ -12,8 +12,9 @@
     $sView    = htmGet("Part",1,false,"Summary");
     $doAction = htmGet("Action",1,false,"List");
     $aParts   = array(
-        "Summary"  => array("Title"=>"Accounts Summary","Menu"=>"Summary", "URL"=>"accounts.php?Part=Summary"),
-        "Accounts" => array("Title"=>"Accounts",        "Menu"=>"Accounts","URL"=>"accounts.php?Part=Accounts"),
+        "Summary"  => array("Title"=>"Accounts Summary",       "Menu"=>"Summary",     "URL"=>"accounts.php?Part=Summary"),
+        "Accounts" => array("Title"=>"Accounts",               "Menu"=>"Accounts",    "URL"=>"accounts.php?Part=Accounts"),
+        "Trans"    => array("Title"=>"Accounting Transactions","Menu"=>"Transactions","URL"=>"accounts.php?Part=Trans"),
     );
 
    /**
@@ -32,6 +33,11 @@
                 case "Edit": include_once("parts/accounts_edit.php");     break;
                 case "New":  include_once("parts/accounts_edit.php");     break;
                 case "Save": include_once("parts/accounts_save.php");     break;
+                default: echo "<p>Nothing to display.</p>"; break;
+            }; break;
+        case "Trans":
+            switch($doAction) {
+                case "List": include_once("parts/accounting_transactions.php"); break;
                 default: echo "<p>Nothing to display.</p>"; break;
             }; break;
         default: echo "<p>Nothing to display.</p>"; break;

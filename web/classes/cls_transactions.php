@@ -13,6 +13,8 @@
         private $toDate   = null;
         private $pageSize = 50;
         private $pageNum  = 1;
+        private $accDone  = null;
+        private $resOrder = "DESC";
 
         // Constructor
         function __construct($oDB) {
@@ -20,6 +22,14 @@
         }
 
         // Methods
+        public function setOrder($newOrder) {
+            if($newOrder == "ASC") {
+                $this->resOrder = "ASC";
+            } else {
+                $this->resOrder = "DESC";
+            }
+        }
+
         public function setFilter($filterType, $filterValue) {
             switch($filterType) {
                 case "FundsID":
@@ -36,6 +46,9 @@
                     break;
                 case "PageNum":
                     $this->pageNum  = intval($filterValue);
+                    break;
+                case "AccountingDone":
+                    $this->accDone  = $filterValue !== null ? boolval($filterValue) : null;
                     break;
                 default:
                     echo "Unknown filter type ...<br />";
@@ -59,6 +72,9 @@
                     break;
                 case "PageNum":
                     $this->pageNum  = 1;
+                    break;
+                case "AccountingDone":
+                    $this->accDone  = null;
                     break;
                 default:
                     echo "Unknown filter type ...<br />";
@@ -115,28 +131,38 @@
             $SQL .= "tc.Factor AS CurrencyFac, ";
             $SQL .= "t.Amount AS Amount, ";
             $SQL .= "fc.Factor AS AmountFac, ";
+            $SQL .= "t.AccountingID AS AccountingID, ";
+            $SQL .= "ac.GroupID AS AccGroupID, ";
+            $SQL .= "acc.Count AS AccCount, ";
+            $SQL .= "acc.Name AS AccName, ";
+            $SQL .= "acc.Code AS AccCode, ";
             $SQL .= "cm.Height AS BlockHeight, ";
-            $SQL .= "cm.Hash AS TransactionHash, ";
-            $SQL .= "IF(a.Count IS NULL, 0, a.Count) AS AccCount, ";
-            $SQL .= "IF(a.Total IS NULL, 0, a.Total) AS AccTotal ";
+            $SQL .= "cm.Hash AS TransactionHash ";
             $SQL .= "FROM transactions AS t ";
             $SQL .= "LEFT JOIN funds AS f ON f.ID = t.FundsID ";
             $SQL .= "LEFT JOIN currency AS tc ON tc.ID = t.CurrencyID ";
             $SQL .= "LEFT JOIN currency AS fc ON fc.ID = f.CurrencyID ";
             $SQL .= "LEFT JOIN crypto_meta AS cm ON cm.transactionID = t.ID ";
+            $SQL .= "LEFT JOIN accounting AS ac ON ac.ID = t.AccountingID ";
             $SQL .= "LEFT JOIN (";
-            $SQL .=     "SELECT TransactionID, ";
-            $SQL .=     "COUNT(ID) AS Count, ";
-            $SQL .=     "SUM(Amount) AS Total ";
-            $SQL .=     "FROM accounting GROUP BY TransactionID";
-            $SQL .= ") AS a ON t.ID = a.TransactionID ";
+            $SQL .=     "SELECT ";
+            $SQL .=     "tmp1.GroupID, ";
+            $SQL .=     "COUNT(tmp1.ID) AS Count, ";
+            $SQL .=     "tmp1.AccountID AS Account, ";
+            $SQL .=     "tmp2.Name AS Name, ";
+            $SQL .=     "tmp2.Code AS Code ";
+            $SQL .=     "FROM accounting AS tmp1 ";
+            $SQL .=     "LEFT JOIN accounts AS tmp2 ON tmp2.ID = tmp1.AccountID ";
+            $SQL .=     "WHERE tmp1.IsSource = 0 ";
+            $SQL .=     "GROUP BY tmp1.GroupID";
+            $SQL .= ") AS acc ON acc.GroupID = ac.GroupID ";
             if($ID > 0) {
                 $SQL .= "WHERE t.ID = '".$this->db->real_escape_string($ID)."' ";
             } else {
                 $SQL .= "WHERE t.ID > 0 ";
             }
             if(!is_null($this->fundsID)) {
-                $SQL .= "AND t.FundsID = '".$this->db->real_escape_string($this->fundsID)."' ";
+                $SQL .= "AND t.FundsID = ".$this->dbWrap($this->fundsID,"int")." ";
             }
             if(!is_null($this->fromDate)) {
                 $SQL .= "AND t.RecordDate >= '".date("Y-m-d",$this->fromDate)."' ";
@@ -144,7 +170,10 @@
             if(!is_null($this->toDate)) {
                 $SQL .= "AND t.RecordDate <= '".date("Y-m-d",$this->toDate)."' ";
             }
-            $SQL .= "ORDER BY t.RecordDate DESC, t.ID DESC ";
+            if(!is_null($this->accDone)) {
+                $SQL .= "AND t.AccountingID IS ".($this->accDone ? "NOT " : "")."NULL ";
+            }
+            $SQL .= "ORDER BY t.RecordDate ".$this->resOrder.", t.ID ".$this->resOrder." ";
             if($splitPages) {
                 $SQL .= "LIMIT ".(($this->pageNum-1)*$this->pageSize).",".$this->pageSize." ";
             }
@@ -171,8 +200,11 @@
                     "CurrencyFac"     => $aRow["CurrencyFac"],
                     "Amount"          => $aRow["Amount"],
                     "AmountFac"       => $aRow["AmountFac"],
+                    "AccountingID"    => $aRow["AccountingID"],
+                    "AccGroupID"      => $aRow["AccGroupID"],
                     "AccCount"        => $aRow["AccCount"],
-                    "AccTotal"        => $aRow["AccTotal"],
+                    "AccName"         => $aRow["AccName"],
+                    "AccCode"         => $aRow["AccCode"],
                     "BlockHeight"     => $aRow["BlockHeight"],
                     "TransactionHash" => $aRow["TransactionHash"],
                 );

@@ -222,6 +222,7 @@ a:hover {color: #009900; text-decoration: underline;}
 
 .list-table {
     margin: 0 0 1em 0;
+    width: 100%;
 }
 
 .list-table td {
@@ -255,6 +256,12 @@ a:hover {color: #009900; text-decoration: underline;}
     border: 0;
 }
 
+.list-foot td {
+    font-weight: bold;
+    border-top: 2px solid #999999;
+    background-color: #d7d7d7;
+}
+
 .list-stats td {
     /*text-align: right;*/
     font-size: 0.8em;
@@ -281,9 +288,10 @@ a:hover {color: #009900; text-decoration: underline;}
     text-align: right;
 }
 
-.input-s {width: 120px;}
-.input-m {width: 240px;}
-.input-w {width: 360px;}
+.input-xs {width:  80px;}
+.input-s  {width: 120px;}
+.input-m  {width: 240px;}
+.input-w  {width: 360px;}
 
 .text-w {
     width: 360px;
@@ -345,8 +353,10 @@ a:hover {color: #009900; text-decoration: underline;}
 }
 
 .expand {
+    white-space: nowrap;
     text-overflow: ellipsis;
-    width: 100%;
+    overflow: hidden;
+    max-width: 1px;
 }
 
 .no-resize {resize: none;}

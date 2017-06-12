@@ -34,6 +34,9 @@
             case "datetime":
                 $dbVar = $dbVar === null ? "NULL" : date("'Y-m-d H:i:s'",$dbVar);
                 break;
+            case "bool":
+                $dbVar = $dbVar === null ? "NULL" : ($dbVar ? "1" : "0");
+                break;
             }
             return $dbVar;
         }

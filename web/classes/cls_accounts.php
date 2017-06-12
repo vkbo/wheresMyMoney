@@ -115,5 +115,29 @@
                 return true;
             }
         }
+
+        public function generateSelections($showYear) {
+
+            global $cTypes;
+
+            $aAccounts = $this->getData();
+            $sReturn   = "";
+            $sPrevType = "";
+
+            foreach($aAccounts["Data"] as $aAcc) {
+                if($aAcc["Type"] != $sPrevType) {
+                    if($sPrevType != "") {
+                        $sReturn .= "</optgroup>";
+                    }
+                    $sReturn  .= "<optgroup label='".$cTypes["AccTypes"][$aAcc["Type"]]."'>";
+                    $sPrevType = $aAcc["Type"];
+                }
+                $sAccount = $aAcc["Code"]." - ".$aAcc["AccountName"];
+                $sReturn .= "<option value='".$aAcc["ID"]."'>".$sAccount."</option>";
+            }
+            $sReturn .= "</optgroup>";
+
+            return $sReturn;
+        }
     }
 ?>

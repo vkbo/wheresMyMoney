@@ -13,6 +13,7 @@
     if($doAction == "New") {
         echo "<h2>Accounts</h2>\n";
         echo "<h3>Adding Account</h3>\n";
+        $frmUpdateID    = "";
         $frmName        = "";
         $frmType        = "";
         $frmCode        = "";

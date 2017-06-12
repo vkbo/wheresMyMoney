@@ -85,17 +85,22 @@
         return trim(number_format($dValue,$iDecimals,"."," ")." ".$aScale[$iScale].$sUnit);
     }
 
-    function rdblAmount($iVal, $iFac=100, $iDec=0, $iMax=12) {
+    function rdblAmount($iVal, $iFac=100, $iDec=0, $iMax=12, $forInput=false) {
 
         if(is_null($iVal)) return "";
         if($iDec == 0)     $iDec = log10($iFac);
         if($iDec > $iMax)  $iDec = $iMax;
+        if($iDec < 0)      $iDec = $iMax;
 
-        $sReturn  = "<span class='amount ";
-        $sReturn .= $iVal < 0 ? "red" : "black";
-        $sReturn .= "'>";
-        $sReturn .= number_format($iVal/$iFac,$iDec,"."," ");
-        $sReturn .= "</span>";
+        if($forInput) {
+            $sReturn  = number_format($iVal/$iFac,$iDec,"."," ");
+        } else {
+            $sReturn  = "<span class='amount ";
+            $sReturn .= $iVal < 0 ? "red" : "black";
+            $sReturn .= "'>";
+            $sReturn .= number_format($iVal/$iFac,$iDec,"."," ");
+            $sReturn .= "</span>";
+        }
 
         return $sReturn;
     }

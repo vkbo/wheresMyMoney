@@ -16,7 +16,8 @@
     $aCurrs    = $theCurrs->getData();
     $theBanks  = new Bank($oDB);
     $aBanks    = $theBanks->getData();
-
+    $theAccs   = new Accounts($oDB);
+    $aAccounts = $theAccs->getData();
 
     if($doAction == "New") {
         echo "<h2>Funds and Bank Accounts</h2>\n";
@@ -28,6 +29,7 @@
         $frmCategory      = "";
         $frmBankID        = "";
         $frmCurrencyID    = "";
+        $frmAccountID     = "";
         $frmOpened        = date($cDateS,time());
         $frmClosed        = "";
     } else {
@@ -43,6 +45,7 @@
         $frmCategory      = $aFunds["Data"][0]["Category"];
         $frmBankID        = $aFunds["Data"][0]["BankID"];
         $frmCurrencyID    = $aFunds["Data"][0]["CurrencyID"];
+        $frmAccountID     = $aFunds["Data"][0]["AccountID"];
         $frmOpened        = $aFunds["Data"][0]["Opened"];
         $frmClosed        = $aFunds["Data"][0]["Closed"];
         $frmOpened        = $frmOpened == "" ? "" : date($cDateS,$frmOpened);
@@ -101,6 +104,27 @@
                 foreach($aCurrs["Data"] as $aRow) {
                     echo "<option value='".$aRow["ID"]."'".($frmCurrencyID==$aRow["ID"]?" selected":"").">".$aRow["ISO"]."</option>";
                 }
+            echo "</select>";
+        echo "</td>";
+    echo "</tr>\n";
+    echo "<tr>";
+        echo "<th>Default Account</th>";
+        echo "<td>";
+            echo "<select name='AccountID'>";
+                echo "<option value=''>None</option>";
+                $sPrevType = "";
+                foreach($aAccounts["Data"] as $aRow) {
+                    if($aRow["Type"] != $sPrevType) {
+                        if($sPrevType != "") {
+                            echo "</optgroup>";
+                        }
+                        echo "<optgroup label='".$cTypes["AccTypes"][$aRow["Type"]]."'>";
+                        $sPrevType = $aRow["Type"];
+                    }
+                    $sAccount = $aRow["Code"]." - ".$aRow["AccountName"];
+                    echo "<option value='".$aRow["ID"]."'".($frmAccountID==$aRow["ID"]?" selected":"").">".$sAccount."</option>";
+                }
+                echo "</optgroup>";
             echo "</select>";
         echo "</td>";
     echo "</tr>\n";
