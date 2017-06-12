@@ -2,22 +2,38 @@
 #  Database Create SQL for MySQL
 #
 
-CREATE TABLE `account` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Type` tinyint(1) DEFAULT NULL,
-  `Name` varchar(15) DEFAULT NULL,
-  `Description` varchar(255) DEFAULT NULL,
-  `Code` varchar(4) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `accounting` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `TransactionID` int(11) DEFAULT NULL,
-  `AccountID` int(11) DEFAULT NULL,
-  `Amount` bigint(20) DEFAULT NULL,
-  `CurrencyID` int(11) DEFAULT NULL,
+  `GroupID` int(11) NOT NULL,
+  `AccountID` int(11) NOT NULL,
+  `IsSource` tinyint(1) NOT NULL DEFAULT '0',
+  `Details` varchar(255) DEFAULT NULL,
+  `CurrencyID` int(11) NOT NULL,
+  `Debit` bigint(20) NOT NULL DEFAULT '0',
+  `Credit` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `IDX_IDS` (`GroupID`,`AccountID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `accounting_group` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `RecordDate` date DEFAULT NULL,
+  `Year` smallint(6) DEFAULT NULL,
+  `Month` tinyint(4) DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
+  `Updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `IDX_DATE` (`RecordDate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `accounts` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Type` varchar(2) NOT NULL,
+  `Name` varchar(32) NOT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Code` varchar(4) DEFAULT NULL,
+  `ValidFrom` date DEFAULT NULL,
+  `ValidTo` date DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,6 +84,7 @@ CREATE TABLE `funds` (
   `Category` varchar(2) DEFAULT NULL,
   `BankID` int(11) DEFAULT NULL,
   `CurrencyID` int(11) DEFAULT NULL,
+  `AccountID` int(11) DEFAULT NULL,
   `Opened` date DEFAULT NULL,
   `Closed` date DEFAULT NULL,
   PRIMARY KEY (`ID`)
@@ -91,8 +108,9 @@ CREATE TABLE `transactions` (
   `Original` bigint(20) DEFAULT NULL,
   `CurrencyID` int(11) DEFAULT NULL,
   `Amount` bigint(20) NOT NULL,
-  `Complete` tinyint(1) DEFAULT NULL,
+  `AccountingID` int(11) DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
+  `Locked` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `IDX_FUNDS` (`FundsID`),
   KEY `IDX_DATE` (`RecordDate`)
@@ -104,5 +122,7 @@ CREATE TABLE `transactions_yearly` (
   `RecordDate` date DEFAULT NULL,
   `Amount` bigint(20) DEFAULT NULL,
   `Updated` datetime DEFAULT NULL,
-  PRIMARY KEY (`ID`)
+  `Locked` datetime DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UNQ_KEYS` (`FundsID`,`RecordDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
